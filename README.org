@@ -1,0 +1,5 @@
+#+TITLE:     R
+#+AUTHOR:    J. Alexander Branham
+#+EMAIL:     branham@utexas.edu
+
+This is a repository to host various R teaching/learning material
