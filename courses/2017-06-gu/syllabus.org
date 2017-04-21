@@ -1,0 +1,43 @@
+#+TITLE: Introduction to Data Analysis & Reporting with R
+#+AUTHOR: University of Gothenburg, Department of Political Science
+#+DATE: June 2017
+#+EMAIL: branham@utexas.edu
+#+OPTIONS: toc:nil num:nil
+#+LaTeX_CLASS_OPTIONS: [colorlinks, linkcolor=blue, urlcolor=blue]
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+
+- Email: :: [[mailto:branham@utexas.edu][branham@utexas.edu]]
+- Course website: :: [[https://jabranham.com/learn-r]]
+- Course times:
+  - June 15 --- 13--16
+  - June 16 --- 9--12
+
+* Confirmation
+The course syllabus was confirmed by the Department of Political Science on (TO BE ADDED)
+* Position in the educational system
+The course is a single subject course in political science offered at the level of doctoral studies.
+* Entry requirements
+A student who is enrolled in studies at the doctoral level is eligible for the course.
+* Course content
+This course will serve as an introduction to R with an emphasis on quantitative data analysis and reporting results. We'll focus on some of the most common tasks in any data analysis --- cleaning data, transforming it, producing tables, and making visualizations. The course should be useful for those with no previous R experience as well as for novice or intermediate R users. We'll devote considerable time to learning how to produce high-quality graphics in R using the popular "ggplot2" package. Participants will also learn how to report other types of R output as tables or inline statistics/numbers for inclusion into a LaTeX document. Finally, we will also cover how to make your analysis easily replicable for others, an increasingly important task as more journal adopt replication policies.
+* Learning outcomes
+Students who successfully complete the course will learn how to:
+- Produce high-quality, publication-ready graphics
+- Perform common tasks involved with any data analysis including:
+  - Importing data into R
+  - Cleaning data
+  - Joining (merging) data
+  - Reporting basic descriptive statistics as well as more complicated output from, for example, linear regressions
+- Do all of the above in a manner that is:
+  - Easy to include in manuscripts (with an emphasis on LaTeX formatting)
+  - Easy for others to reproduce
+* Form of teaching
+The course consists of workshops and small lecture segments.
+
+/Language of instruction:/ English
+* Assessment
+Students will be assessed by means of a course paper and active participation in the workshops. For the paper, students should write up an analysis as they would for submission to a journal. The analysis should be conducted entirely within R incorporating concepts learned from the course. Students will be required to submit replication files along with the paper. These replication files should conform to the replication guidelines used by the /American Journal of Political Science/, available [[https://ajpsblogging.files.wordpress.com/2016/05/ajps-replic-guidelines-ver-2-1.pdf][here]].
+* Grades
+The course will be graded pass(G)/fail(U).
+* Course evaluation
+A course evaluation will be conducted at the end of the course.
