@@ -1,11 +1,11 @@
 #+TITLE: Introduction to Data Analysis & Reporting with R
 #+SUBTITLE: Course Reading List
 #+AUTHOR: University of Gothenburg, Department of Political Science
-#+DATE: June 2017
+#+DATE: 15 & 16 June 2017
 #+EMAIL: branham@utexas.edu
 #+OPTIONS: toc:nil num:nil
 #+LaTeX_CLASS_OPTIONS: [colorlinks, linkcolor=blue, urlcolor=blue]
-#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \usepackage[a4paper, margin=2.5cm]{geometry}
 
 Participants are asked to install R (and, optionally, Rstudio) before the course begins. If you are completely new to R (or if it's been a while since you used it and you want a refresher), please also complete the pre-class exercises as well.
 

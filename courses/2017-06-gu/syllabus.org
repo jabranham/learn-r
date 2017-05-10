@@ -4,7 +4,7 @@
 #+EMAIL: branham@utexas.edu
 #+OPTIONS: toc:nil num:nil
 #+LaTeX_CLASS_OPTIONS: [colorlinks, linkcolor=blue, urlcolor=blue]
-#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \usepackage[a4paper, margin=1in]{geometry}
 
 - Email: :: [[mailto:branham@utexas.edu][branham@utexas.edu]]
 - Course website: :: [[https://jabranham.com/learn-r]]
