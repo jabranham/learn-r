@@ -11,20 +11,22 @@ Participants are asked to install R (and, optionally, Rstudio) before the course
 
 Installation of R, the material covered in the pre-class exercises, and a basic familiarity with statistics will be assumed.
 
-* Software
-** R
-Participants are requested to install R (and, optionally, Rstudio) before the course begins. R is free and open-source software. Instructions for installing R can be found [[https://cloud.r-project.org/][online]]. The latest release as of 2017-04-21 is R version 3.4.0.
-** R Editor
-Most users will want to install Rstudio, a free and open-source R IDE ("integrated development environment").[fn:1] Navigate to www.rstudio.com and follow instructions for your operating system to download the open source version.
-* Pre-class exercises
+* _Software_
+- R :: Participants are requested to install R (and, optionally, Rstudio) before the course begins. R is free and open-source software. Instructions for installing the latest release of R can be found online: [[https://cloud.r-project.org/]].
+- R Editor :: Most users will want to install Rstudio, a free and open-source R IDE ("integrated development environment").[fn:1] Navigate to [[https://www.rstudio.com][www.rstudio.com]] and follow instructions for your operating system to download the open source version.
+* _Pre-class exercises_
 - [[http://tryr.codeschool.com/levels/1/challenges/1][Try R]] :: Provides a nice introduction to using R. The length of time it takes depends on how familiar you are with R, but it should take no longer than an hour.
-* Additional resources
+* _Additional resources_
 None of this is required before the course begins, but all of it is useful:
+** Ask R
+- R's built in help system :: R has built in documentation for nearly everything. If you have a question about a specific function (e.g. =mean=), do =?mean= at the console. You can access the help system for R itself with =help.start()=.
+- [[http://swirlstats.com/students.html][swirl]] :: An R package that can teach you R from within R.
 ** Short content
 - [[https://thepoliticalmethodologist.com/2013/11/25/making-high-resolution-graphics-for-academic-publishing/][Making High Resolution Graphics for Academic Publishing]] :: Great walkthrough of the details on how to produce graphics for publication from R and Stata.
 - [[https://www.r-bloggers.com/][R-bloggers]] :: Aggregates different posts from around the web about R. Much isn't relevant for us, but interesting nonetheless. [[https://feeds.feedburner.com/RBloggers][RSS feed here]]
 - [[https://www.rstudio.com/resources/cheatsheets/][Rstudio's cheatsheets]] :: Great cheatsheets for base R, dplyr functions, ggplot2, and others. If you use Rstudio's IDE the cheatsheet with keyboard shortcuts is particularly useful!
-- [[http://r4stats.com/articles/why-r-is-hard-to-learn/][Why R is hard to learn]] :: An interesting read and a great reminder that everyone struggles with R at some point. Most people at multiple points!
+- [[http://r4stats.com/articles/why-r-is-hard-to-learn/][Why R is hard to learn]] :: An interesting read, especially once you have used R a bit, and a great reminder that everyone struggles with R at some point. Most people at multiple points!
+- [[https://www.datacamp.com/courses/free-introduction-to-r][Data Camp's Introducion to R]] :: A (free) online ~4 hour tutorial that goes over the basics of R.
 ** Resource of resources
 - [[http://www.cookbook-r.com/][Cookbook for R]] :: Covers some solution to common tasks and problems.
 - [[https://cran.r-project.org/web/views/][CRAN task views]] :: CRAN's curated list of packages by topic (e.g. Bayesian, reproducible research, time series, etc)
