@@ -21,19 +21,21 @@ None of this is required before the course begins, but all of it is useful:
 ** Ask R
 - R's built in help system :: R has built in documentation for nearly everything. If you have a question about a specific function (e.g. =mean=), do =?mean= at the console. You can access the help system for R itself with =help.start()=.
 - [[http://swirlstats.com/students.html][swirl]] :: An R package that can teach you R from within R.
+** Resource of resources
+- [[http://www.cookbook-r.com/][Cookbook for R]] :: Covers some solution to common tasks and problems.
+- [[https://cran.r-project.org/web/views/][CRAN task views]] :: CRAN's curated list of packages by topic (e.g. Bayesian, reproducible research, time series, etc)
+- [[https://stackoverflow.com/questions/tagged/r][Stack Overflow - R tag]] :: A website where people ask and answer questions with a nice voting system so the best answers appear at the top.
 ** Short content
 - [[https://thepoliticalmethodologist.com/2013/11/25/making-high-resolution-graphics-for-academic-publishing/][Making High Resolution Graphics for Academic Publishing]] :: Great walkthrough of the details on how to produce graphics for publication from R and Stata.
 - [[https://www.r-bloggers.com/][R-bloggers]] :: Aggregates different posts from around the web about R. Much isn't relevant for us, but interesting nonetheless. [[https://feeds.feedburner.com/RBloggers][RSS feed here]]
 - [[https://www.rstudio.com/resources/cheatsheets/][Rstudio's cheatsheets]] :: Great cheatsheets for base R, dplyr functions, ggplot2, and others. If you use Rstudio's IDE the cheatsheet with keyboard shortcuts is particularly useful!
 - [[http://r4stats.com/articles/why-r-is-hard-to-learn/][Why R is hard to learn]] :: An interesting read, especially once you have used R a bit, and a great reminder that everyone struggles with R at some point. Most people at multiple points!
-- [[https://www.datacamp.com/courses/free-introduction-to-r][Data Camp's Introducion to R]] :: A (free) online ~4 hour tutorial that goes over the basics of R.
-** Resource of resources
-- [[http://www.cookbook-r.com/][Cookbook for R]] :: Covers some solution to common tasks and problems.
-- [[https://cran.r-project.org/web/views/][CRAN task views]] :: CRAN's curated list of packages by topic (e.g. Bayesian, reproducible research, time series, etc)
-- [[https://stackoverflow.com/questions/tagged/r][Stack Overflow - R tag]] :: A website where people ask and answer questions with a nice voting system so the best answers appear at the top.
-** Books
+- [[https://www.datacamp.com/courses/free-introduction-to-r][Data Camp's Introducion to R]] :: A (free) online 4 hour tutorial that goes over the basics of R.
+** Long content
 - [[http://adv-r.had.co.nz/][Advanced R]] :: If you want to dive into some of the nitty-gritty details of how R things.
 - [[http://r4ds.had.co.nz/][R for Data Science]] :: An excellent walk through how to do some basic data manipulation in R. Covers a lot of similar materials as this course
+- [[https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN][Version Control with Git]] :: Version control is essentially MS Word's "track changes" feature on steroids. See  [[https://stackoverflow.com/questions/1408450/why-should-i-use-version-control][here]] and [[https://stackoverflow.com/questions/2712421/r-and-version-control-for-the-solo-data-analyst][here]] for why you might want to use it. The most popular tool for this is =git=, and it plays well with R/Rstudio. As an added bonus, it also works well with \LaTeX{} files (answering the "How do I get track changes with \LaTeX{} question that everyone always asks"). You can [[https://try.github.io/levels/1/challenges/1][try git from your browser]]. Warning: =git= comes with a bit of a learning curve.
+
 
 * Footnotes
 
