@@ -1,0 +1,339 @@
+#+TITLE:     Introduction to Data Analysis and Reporting with R
+#+AUTHOR:    J. Alexander Branham
+#+EMAIL:     branham@utexas.edu
+#+DATE:      June 2017
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LATEX_COMPILER: xelatex
+#+OPTIONS: toc:nil H:2
+#+LATEX_HEADER: \beamerdefaultoverlayspecification{<+->}
+#+LATEX_HEADER: \usepackage[newfloat]{minted}
+#+LATEX_CLASS_OPTIONS: [colorlinks, urlcolor=blue, aspectratio=169]
+#+PROPERTY: header-args:R :session *R*
+#+BEAMER_THEME: metropolis[titleformat=smallcaps, progressbar=frametitle]
+* Course Information
+** Course Information
+- We'll cover tools that should be helpful in nearly any analysis
+  - Graphing, data manipulation, etc
+- We won't cover specialized, specific tools. But you should get a good enough understanding of how R works to be able to teach yourself these
+** Outline
+- TODO
+* What is R?
+** What is R?
+- This is a course about R...  /mais qu'est-ce que c'est/?
+- "R is a language and environment for statistical computing and graphics"
+- Derived from S, designed at Bell Laboratories
+  - S first appeared in 1976!
+- /R is a language/ ... so be prepared for it to hurt a bit to learn!
+** Advantages of R
+- Free
+- Open-source
+- Available on nearly every platform
+- Extensible via *packages* --- CRAN has over 10,000
+- Great community
+** Running code
+- How to use this R thing?
+- If you have R and Rstudio installed, open Rstudio.
+- You should see three panes.
+- We'll focus for now on the console, which is on the left and should look something like this:
+** 
+#+BEGIN_EXAMPLE
+  R version 3.4.0 (2017-06-15) -- "You Stupid Darkness"
+  Copyright (C) 2017 The R Foundation for Statistical Computing
+  Platform: x86_64-pc-linux-gnu (64-bit)
+
+  [ ... ]
+
+  Type 'demo()' for some demos, 'help()' for on-line help, or
+  'help.start()' for an HTML browser interface to help.
+  Type 'q()' to quit R.
+#+END_EXAMPLE
+** R is a big giant calculator
+- R can do math
+- Really, really fancy math
+- Try typing =3 + 3= in the console
+- After pressing enter, R will return =6=
+- R understands the order of operations 
+  - =3 + 3 * 9= is different from =(3 + 3) * 9=
+** A quiz
+- Time for a quiz!
+- What's 7 times 149?
+- What's the square root of the previous answer?
+- You can hit the up arrow to get whatever you entered last
+** Answers
+#+BEGIN_SRC R :exports both
+7 * 149
+#+END_SRC
+
+#+BEGIN_SRC R :exports both
+(7 * 149) ^ (1 / 2)
+#+END_SRC
+** Packages
+- At this point, please install a few packages. You'll need an internet connection.
+- =install.packages(c("tidyverse", "gapminder"))=
+- Don't worry about what is going on here, I'll explain it later.
+- Depending on your exact setup, R may ask you a few questions about using a personal library. Do so.
+- If you get an error, make sure you can access the internet (https://cloud.r-project.org in particular)
+** R scripts
+- While those packages are installing, let's go ahead and open up an R script.
+- Allows you to save code so it doesn't disappear into the ether
+- If using Rstudio, File, new file, R script (or Ctrl+shift+n)
+- *Tip*: can send a line from R script to console for evaluation using ctrl+enter
+- *Tip*: use tab completion so you don't have to remember things
+** Data Analysis with R
+- Let's take a look at some data.
+- We're going to use some data that comes with the =gapminder= package you just installed
+- To access the data, you need to load it into memory:
+
+#+BEGIN_SRC R
+library(gapminder)
+#+END_SRC
+** Exploring our data
+- =gapminder= is a *data.frame*
+- Can get a sense of what it looks like with some *functions*
+- Let's get a sense of what =gapminder= has:
+#+BEGIN_SRC R :eval no
+View(gapminder)
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+head(gapminder)
+#+END_SRC
+** Descriptive statistics
+- R has lots of built-in functions for getting a sense of the data.
+- Try running =summary(gapminder)=
+- What's the average life expectancy?
+#+BEGIN_SRC R :exports both :results output
+summary(gapminder)
+#+END_SRC
+* Graphics in R
+** Graphics in R
+- Let's start making graphs
+- This is the fun part!
+- We're going to rely on the `ggplot2` package, which we installed earlier (as a part of the tidyverse package)
+- "The Grammar of Graphics"
+- load it up with
+#+BEGIN_SRC R
+library(ggplot2)
+#+END_SRC
+** Our question
+#+BEGIN_QUOTE
+What's the relationship between wealth (gdp) and average life expectancy?
+#+END_QUOTE
+- Scatterplot is a good way to get started looking at data!
+** ggplot2
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +                # Please use "gapminder" 
+    geom_point(mapping = aes(x = gdpPercap, # Put gdp on x axis
+                             y = lifeExp))  # Put lifeExp on y
+
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life.pdf]]
+** Fix that x axis!
+
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_point(mapping = aes(x = log(gdpPercap), # Take log of x-axis
+                             y = lifeExp))
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-logx.pdf", width = 9, height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-logx.pdf]]
+** Aesthetics
+- =ggplot()= creates a coordinate system
+- You can then add one or more layers to this to create a plot
+- We just added the =geom_point()= layer, which used the =x= and =y= aesthetics (=aes=) to add a layer of points to our plot
+- We can add more information to the aesthetics to convey more information like color, shape, and size.
+- Example: What if we want to convey info about relationship between wealth and life expectancy by continent?
+- One solution: add color by continent
+** Color 
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_point(mapping = aes(x = log(gdpPercap),
+                             y = lifeExp,
+                             ## colour for the Brits
+                             color = continent)) 
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-continent-color.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-continent-color.pdf]]
+** Multiple aesthetics - color & shape
+- Of course, some people are colorblind, and others don't print things in color, so may be nice to use something like shape in addition:
+
+#+BEGIN_SRC R
+  ggplot(gapminder) +
+    geom_point(aes(x = log(gdpPercap),
+                   y = lifeExp,
+                   color = continent, 
+                   shape = continent))
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-continent-shape.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-continent-shape.pdf]]
+** More about aesthetics
+- There are more aesthetic mappings
+- Try =size=, and =alpha= (transparency) for yourself
+- You can set aesthetics directly by mapping the aesthetic to a value /outside the call to aes()/ 
+- For example, we may want to make the dots slightly transparent to avoid overplotting
+** Aesthetics not mapped to variable
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_point(mapping = aes(x = log(gdpPercap),
+                             y = lifeExp,
+                             color = continent),
+               alpha = 0.5)
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-transparent.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-transparent.pdf]]
+
+** Facets
+- So we can use aesthetics to add variables to our graph like =color=. 
+- We might also want to add variables by splitting up the graph based on values of another variables --- e.g. subfigures
+- If we want to use just one variable, use =facet_wrap()=
+\pause
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_point(mapping = aes(x = log(gdpPercap),
+                             y = lifeExp)) +
+    facet_wrap( ~ continent, nrow = 2)
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-facet-continent.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-facet-continent.pdf]]
+** Facets with two variables
+- ggplot can facet with two variables with one by row and the other by column
+- Use =facet_grid(row ~ column)= to do so
+- Our =gapminder= data aren't very well suited for this, but you could do something like:
+\pause
+ #+BEGIN_SRC R
+   ggplot(data = gapminder) +
+     geom_point(mapping = aes(x = log(gdpPercap),
+                              y = lifeExp)) +
+     ## year >= 2000 will be TRUE or FALSE; 
+     ## we'll learn more about logical statements later on:
+     facet_grid(year >= 2000 ~ continent)  
+#+END_SRC
+#+BEGIN_SRC R :exports none
+   ggsave("figures/gdp-life-facet-continent-post2000.pdf",
+          width = 9,
+          height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-facet-continent-post2000.pdf]]
+** ggplot
+- Review of what we've learned so far:
+  - =ggplot()= creates a blank coordinate system
+  - =aes()= helps us map variables to visual properties (x/y location, color, shape, etc)
+  - =facet_wrap()= and =facet_grid()= help us convey variables via subfigures
+- But what about plots other than the scatterplot?
+** geoms
+- A =geom= (geometrical object) is =ggplot='s way of representing data
+- We've been using =geom_point()= to represent data as points, e.g. a scatterplot
+- A =geom= is (usually) the thing we call the plot - line plots, bar plots, boxplots, etc
+- Let's plot the same relationship between wealth and life expectancy but using =geom_smooth()= rather than =geom_point()=:
+\pause
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_smooth(mapping = aes(x = log(gdpPercap),
+                              y = lifeExp)) 
+
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-smooth.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-smooth.pdf]]
+** geoms and aesthetics
+- Note that different aesthetics are available for different geoms
+- So while =linetype= didn't really make sense for our scatterplot, it makes total sense for a line:
+\pause
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_smooth(mapping = aes(x = log(gdpPercap),
+                              y = lifeExp,
+                              linetype = continent)) 
+
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-smooth-continent.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-smooth-continent.pdf]]
+** multiple geoms
+- To add multiple geoms, just add them one after the other:
+\pause
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_point(mapping = aes(x = log(gdpPercap),
+                             y = lifeExp)) + 
+    geom_smooth(mapping = aes(x = log(gdpPercap),
+                              y = lifeExp)) 
+
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-smooth-point.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-smooth-point.pdf]]
+** inherit aes
+- Instead of retyping the =aes= mapping, we can specify a set of defaults in the =ggplot()= call, and overwrite (or add) then in each =geom= call:
+\pause
+#+BEGIN_SRC R
+  ggplot(data = gapminder,
+         mapping = aes(x = log(gdpPercap),
+                       y = lifeExp)) +
+    geom_point(mapping = aes(color = continent)) + 
+    geom_smooth()
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-smooth-point-color.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-smooth-point-color.pdf]]
+
+
