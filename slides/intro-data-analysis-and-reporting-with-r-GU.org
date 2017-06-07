@@ -80,6 +80,7 @@
 - If using Rstudio, File, new file, R script (or Ctrl+shift+n)
 - *Tip*: can send a line from R script to console for evaluation using ctrl+enter
 - *Tip*: use tab completion so you don't have to remember things
+* Graphics in R
 ** Data Analysis with R
 - Let's take a look at some data.
 - We're going to use some data that comes with the =gapminder= package you just installed
@@ -105,7 +106,6 @@ head(gapminder)
 #+BEGIN_SRC R :exports both :results output
 summary(gapminder)
 #+END_SRC
-* Graphics in R
 ** Graphics in R
 - Let's start making graphs
 - This is the fun part!
@@ -335,5 +335,5 @@ What's the relationship between wealth (gdp) and average life expectancy?
 ** 
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life-smooth-point-color.pdf]]
-
-
+* Basic R
+* Data import & manipulation
