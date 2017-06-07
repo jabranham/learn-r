@@ -61,11 +61,11 @@
 - What's the square root of the previous answer?
 - You can hit the up arrow to get whatever you entered last
 ** Answers
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :results output
 7 * 149
 #+END_SRC
 
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :exports both :results output
 (7 * 149) ^ (1 / 2)
 #+END_SRC
 ** Packages
@@ -80,21 +80,24 @@
 - If using Rstudio, File, new file, R script (or Ctrl+shift+n)
 - *Tip*: can send a line from R script to console for evaluation using ctrl+enter
 - *Tip*: use tab completion so you don't have to remember things
+- *Highly recommend* that you type into a script and use a keyboard shortcut to evaluate code
+  - Easier to edit & rerun
+  - Allows you to save code
 * Graphics in R
 ** Data Analysis with R
 - Let's take a look at some data.
 - We're going to use some data that comes with the =gapminder= package you just installed
 - To access the data, you need to load it into memory:
-
 #+BEGIN_SRC R
 library(gapminder)
 #+END_SRC
+- Note that the =gapminder= object is now in your workspace (top right in Rstudio, otherwise just type =ls()=)
 ** Exploring our data
 - =gapminder= is a *data.frame*
 - Can get a sense of what it looks like with some *functions*
 - Let's get a sense of what =gapminder= has:
 #+BEGIN_SRC R :eval no
-View(gapminder)
+  View(gapminder)
 #+END_SRC
 #+BEGIN_SRC R :exports both :results output
 head(gapminder)
@@ -336,4 +339,174 @@ What's the relationship between wealth (gdp) and average life expectancy?
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life-smooth-point-color.pdf]]
 * Basic R
+** Basics
+- We skipped all of this because plotting is more fun & I wanted to start with something fun 
+- Let's talk about basic R
+** Calculator
+- Remember R can be a calculator:
+#+BEGIN_SRC R :exports both :results output
+  3 * 3 + 29 ^ 4 + 7
+#+END_SRC
+- But R doesn't "remember" the answer to that anywhere
+- You must /assign/ the output to an object in order for R to remember it:
+#+BEGIN_SRC R
+  x <- 3 * 3 + 29 ^ 4 + 7
+  my_name <- "Alex Branham"
+#+END_SRC
+** Wait, what?
+- Yeah, I just assigned letters to an object
+- We can inspect the contents of an object by typing it into the R console:
+#+BEGIN_SRC R :exports both :results output
+  x
+#+END_SRC
+- Here, type =my_= then hit tab to have autocompletion
+#+BEGIN_SRC R :exports both :results output
+  my_name
+#+END_SRC
+** +
+- If you forgot the closing ="= ---  =my_name <- "Alex Branham=
+- The R prompt will change from =>= to =+=
+- This indicates that R is waiting for you.
+- Cancel by mashing ~ESC~
+** R is pedantic
+- You have to be really specific with R:
+#+BEGIN_SRC R :exports both :results output
+x
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+X
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+my_nam
+#+END_SRC
+** Things don't happen magically
+#+BEGIN_SRC R :exports both :results output
+x
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+x / 1000
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+x
+#+END_SRC
+** Functions
+- Functions in R can take zero or more arguments
+#+BEGIN_EXAMPLE
+  function(arg1 = object1, arg2 = object2, arg3 = object3)
+#+END_EXAMPLE
+#+BEGIN_SRC R :exports both :results output
+  my_vector <- seq(from = 1, to = 10, by = 1)
+  my_vector
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+  mean(x = my_vector)
+#+END_SRC
+** Functions, continued
+#+BEGIN_SRC R :exports both :results output
+  my_vector <- c(1, 2, 3, NA, NA, NA, 3, 2, 1)
+  mean(x = my_vector)
+#+END_SRC
+\pause
+#+BEGIN_SRC R :exports both :results output
+  mean(x = my_vector, na.rm = TRUE)
+#+END_SRC
+** Function arguments
+- You don't have to specify argument names if you type them in order.
+- Since =x= is the first argument of =mean()=, no need to type =mean(x = my_vector)=
+- Instead, can just type =mean(my_vector)=
+- This cuts down on the amount you have to type
+** Data
+- OK, so now we know how to assign stuff and functions
+- Let's learn about how R thinks about data
+  - "data" here doesn't have to mean data from e.g. a survey
+- R cares about the *class* (type) of data and its *dimension(s)*
+** Data dimensions
+What's the difference?
+#+BEGIN_SRC R :results output :exports results
+  c(1, 2, 3, 4, 5, 6)
+#+END_SRC
+#+BEGIN_SRC R :results output :exports results
+  matrix(c(1, 2, 3, 4, 5, 6), nrow = 3)
+#+END_SRC
+- Data can have *dimensions*
+- That matrix is a 3 by 2 matrix
+** Dimensions
+- Get the dimensions of an object with =dim()=
+- Calculate the length of a single dimension with =length()=
+- We oftentimes with with 2-dimensional data (e.g. survey data) with multiple *types* of data
+- Let's take a look at =gapminder= from before
+- What kinds of data are there?
+**
+#+BEGIN_SRC R :exports results :results output
+  head(as.data.frame(gapminder))
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+  dim(gapminder)
+#+END_SRC
+** Data types
+- We'll discuss the four most common data types:
+  - Numeric
+  - Logical
+  - Character
+  - Factor
+- We'll also cover =NA=
+** Numeric
+- Numeric is how R thinks about numbers!
+- These can also be called "integer" (if round numbers) or "double"
+#+BEGIN_SRC R :exports both :results output
+  class(c(1, 2, 3))
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+  sum(c(1, 2, 3))
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+  class(sum(c(1, 2, 3)))
+#+END_SRC
+** Logical
+- Logical can take two values --- =TRUE= or =FALSE=
+- This is useful for dummy variables and tests
+#+BEGIN_SRC R :exports both :results output
+  1:10 > 5
+#+END_SRC
+** Character
+- Characters represent text
+- Sometimes these are called "strings"
+#+BEGIN_SRC R
+  c("This", "vector", "is", "of", "length", "what?")
+  c("How about this one?")
+#+END_SRC
+** Factor
+- Factors are how R thinks about categorical variables
+- We already worked with these when we used the =continent= variable from =gapminder=
+#+BEGIN_SRC R :exports both :results output
+  head(gapminder$continent)
+#+END_SRC
+
+** Missing values
+- Missing data is represented by =NA= in R
+- R thinks about this as "something that's there, but whose value we do not know"
+- Missingness propagates
+\pause
+#+BEGIN_SRC R :exports both :results output
+  mean(c(1, 2, NA))
+#+END_SRC
+** Missingness quiz
+What will be the result?
+#+BEGIN_SRC R :eval no
+  3 == NA
+#+END_SRC
+** Missingness quiz answer
+#+BEGIN_SRC R :exports both :results output
+  3 == NA
+#+END_SRC
 * Data import & manipulation
+** Importing data
+- We'll cover how to import rectangular data
+- R can handle other types of data, but it's outside the scope of this class
+- R has a lot of build in functions: =read.csv()=, =read.table()=, etc
+- Packages provide still more: =readr::read_csv()=, =haven::read_dta()=, etc
+- I prefer the =rio= package because I don't have to think:
+#+BEGIN_SRC R :eval no
+  library(rio)
+  my_data <- import("data/file.csv")
+#+END_SRC
