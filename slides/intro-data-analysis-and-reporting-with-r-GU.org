@@ -11,6 +11,10 @@
 #+LATEX_CLASS_OPTIONS: [colorlinks, urlcolor=blue, aspectratio=169]
 #+PROPERTY: header-args:R :session *R*
 #+BEAMER_THEME: metropolis[titleformat=smallcaps, progressbar=frametitle]
+#+BEGIN_SRC R :exports none
+  dir.create("figures/", showWarnings = FALSE)
+#+END_SRC
+
 * Course Information
 ** Course Information
 - We'll cover tools that should be helpful in nearly any analysis
@@ -59,7 +63,7 @@
 - Time for a quiz!
 - What's 7 times 149?
 - What's the square root of the previous answer?
-- You can hit the up arrow to get whatever you entered last
+- *Tip:* You can hit the up arrow to get whatever you entered last
 ** Answers
 #+BEGIN_SRC R :exports both :results output
 7 * 149
@@ -71,6 +75,9 @@
 ** Packages
 - At this point, please install a few packages. You'll need an internet connection.
 - =install.packages(c("tidyverse", "gapminder"))=
+  - If you have already installed some packages, make sure they're up-to-date:
+    - =update.packages()=
+- *Tip:* just type =ins= then hit TAB for tab-completion
 - Don't worry about what is going on here, I'll explain it later.
 - Depending on your exact setup, R may ask you a few questions about using a personal library. Do so.
 - If you get an error, make sure you can access the internet (https://cloud.r-project.org in particular)
@@ -79,10 +86,16 @@
 - Allows you to save code so it doesn't disappear into the ether
 - If using Rstudio, File, new file, R script (or Ctrl+shift+n)
 - *Tip*: can send a line from R script to console for evaluation using ctrl+enter
-- *Tip*: use tab completion so you don't have to remember things
-- *Highly recommend* that you type into a script and use a keyboard shortcut to evaluate code
+- *Strongly recommend* that you type into a script and use a keyboard shortcut to evaluate code
   - Easier to edit & rerun
   - Allows you to save code
+  - You may make comments
+#+BEGIN_SRC R :eval no
+  ## This adds 3 + 3
+  3 + 3
+  3 * 2 # same
+#+END_SRC
+
 * Graphics in R
 ** Data Analysis with R
 - Let's take a look at some data.
@@ -91,7 +104,6 @@
 #+BEGIN_SRC R
 library(gapminder)
 #+END_SRC
-- Note that the =gapminder= object is now in your workspace (top right in Rstudio, otherwise just type =ls()=)
 ** Exploring our data
 - =gapminder= is a *data.frame*
 - Can get a sense of what it looks like with some *functions*
@@ -106,6 +118,7 @@ head(gapminder)
 - R has lots of built-in functions for getting a sense of the data.
 - Try running =summary(gapminder)=
 - What's the average life expectancy?
+\pause
 #+BEGIN_SRC R :exports both :results output
 summary(gapminder)
 #+END_SRC
@@ -124,10 +137,22 @@ What's the relationship between wealth (gdp) and average life expectancy?
 #+END_QUOTE
 - Scatterplot is a good way to get started looking at data!
 ** ggplot2
+- Use the =ggplot()= function to start a plot.
+- The first /argument/ is to tell it the /data/
+- *Tip:* use =?ggplot= to look at the help page, where you can see the names of the arguments
+\pause
+#+BEGIN_SRC R :eval no
+  ggplot(data = gapminder) # Please use gapminder data
+#+END_SRC
+** =geom_point=
+- =ggplot()= by itself is pretty useless, it just starts a plot
+- We then have to tell =ggplot= what to draw!
+- *Tip:* =?geom_point=
+\pause
 #+BEGIN_SRC R
-  ggplot(data = gapminder) +                # Please use "gapminder" 
-    geom_point(mapping = aes(x = gdpPercap, # Put gdp on x axis
-                             y = lifeExp))  # Put lifeExp on y
+    ggplot(data = gapminder) +
+      geom_point(mapping = aes(x = gdpPercap, # Put gdp on x axis
+                               y = lifeExp))  # Put lifeExp on y
 
 #+END_SRC
 #+BEGIN_SRC R :exports none
@@ -143,7 +168,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
-    geom_point(mapping = aes(x = log(gdpPercap), # Take log of x-axis
+    geom_point(mapping = aes(x = log(gdpPercap), # Log x-axis
                              y = lifeExp))
 #+END_SRC
 #+BEGIN_SRC R :exports none
@@ -306,10 +331,11 @@ What's the relationship between wealth (gdp) and average life expectancy?
 \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
-    geom_point(mapping = aes(x = log(gdpPercap),
-                             y = lifeExp)) + 
     geom_smooth(mapping = aes(x = log(gdpPercap),
-                              y = lifeExp)) 
+                              y = lifeExp)) +
+    geom_point(mapping = aes(x = log(gdpPercap),
+                             y = lifeExp))
+
 
 #+END_SRC
 #+BEGIN_SRC R :exports none
@@ -327,8 +353,8 @@ What's the relationship between wealth (gdp) and average life expectancy?
   ggplot(data = gapminder,
          mapping = aes(x = log(gdpPercap),
                        y = lifeExp)) +
-    geom_point(mapping = aes(color = continent)) + 
-    geom_smooth()
+    geom_smooth() +
+    geom_point(mapping = aes(color = continent))
 #+END_SRC
 #+BEGIN_SRC R :exports none
   ggsave("figures/gdp-life-smooth-point-color.pdf",
@@ -389,6 +415,27 @@ x / 1000
 #+BEGIN_SRC R :exports both :results output
 x
 #+END_SRC
+** Missing values
+- Missing data is represented by =NA= in R
+- R thinks about this as "something that's there, but whose value we do not know"
+- Missingness propagates
+\pause
+#+BEGIN_SRC R :exports both :results output
+  mean(c(1, 2, NA))
+#+END_SRC
+** Missingness quiz
+What will be the result?
+#+BEGIN_SRC R :eval no
+  3 == NA
+  NA == NA
+#+END_SRC
+** Missingness quiz answer
+#+BEGIN_SRC R :exports both :results output
+  3 == NA
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+  NA == NA
+#+END_SRC
 ** Functions
 - Functions in R can take zero or more arguments
 #+BEGIN_EXAMPLE
@@ -420,29 +467,6 @@ x
 - Let's learn about how R thinks about data
   - "data" here doesn't have to mean data from e.g. a survey
 - R cares about the *class* (type) of data and its *dimension(s)*
-** Data dimensions
-What's the difference?
-#+BEGIN_SRC R :results output :exports results
-  c(1, 2, 3, 4, 5, 6)
-#+END_SRC
-#+BEGIN_SRC R :results output :exports results
-  matrix(c(1, 2, 3, 4, 5, 6), nrow = 3)
-#+END_SRC
-- Data can have *dimensions*
-- That matrix is a 3 by 2 matrix
-** Dimensions
-- Get the dimensions of an object with =dim()=
-- Calculate the length of a single dimension with =length()=
-- We oftentimes with with 2-dimensional data (e.g. survey data) with multiple *types* of data
-- Let's take a look at =gapminder= from before
-- What kinds of data are there?
-**
-#+BEGIN_SRC R :exports results :results output
-  head(as.data.frame(gapminder))
-#+END_SRC
-#+BEGIN_SRC R :exports both :results output
-  dim(gapminder)
-#+END_SRC
 ** Data types
 - We'll discuss the four most common data types:
   - Numeric
@@ -482,22 +506,29 @@ What's the difference?
   head(gapminder$continent)
 #+END_SRC
 
-** Missing values
-- Missing data is represented by =NA= in R
-- R thinks about this as "something that's there, but whose value we do not know"
-- Missingness propagates
-\pause
-#+BEGIN_SRC R :exports both :results output
-  mean(c(1, 2, NA))
+** Data dimensions
+What's the difference?
+#+BEGIN_SRC R :results output :exports results
+  c(1, 2, 3, 4, 5, 6)
 #+END_SRC
-** Missingness quiz
-What will be the result?
+#+BEGIN_SRC R :results output :exports results
+  matrix(c(1, 2, 3, 4, 5, 6), nrow = 3)
+#+END_SRC
+- Data can have *dimensions*
+- Numeric, logical, character, and factors are single dimensions (so are lists)
+- That matrix is a 3 by 2 matrix
+- Why might we want to have two-dimensional data?
+- Matrices must have the same type, but we can mix and match types with a =data.frame=
+** The data.frame
+- Remember =gapminder= from earlier?
+- We used a =data.frame= to store columns with different data types
+- We can access (index) =data.frame= objects using notation similar to matrix notation
 #+BEGIN_SRC R :eval no
-  3 == NA
-#+END_SRC
-** Missingness quiz answer
-#+BEGIN_SRC R :exports both :results output
-  3 == NA
+  gapminder[2, 1] # get whatever is in the second row, 1st col
+  gapminder[1, ]  # get the first col (all)
+  gapminder[, 1]  # get the first row (all)
+  gapminder[, "country"] # select by name
+  gapminder$country # slightly different
 #+END_SRC
 * Data import & manipulation
 ** Importing data
@@ -505,8 +536,95 @@ What will be the result?
 - R can handle other types of data, but it's outside the scope of this class
 - R has a lot of build in functions: =read.csv()=, =read.table()=, etc
 - Packages provide still more: =readr::read_csv()=, =haven::read_dta()=, etc
-- I prefer the =rio= package because I don't have to think:
+- I prefer the =rio= package because I don't have to think
+- Always gives you a =data.frame=:
 #+BEGIN_SRC R :eval no
   library(rio)
-  my_data <- import("data/file.csv")
+  csv_data <- import("data/file.csv")
+  stata_data <- import("data/file.dta")
+#+END_SRC
+** dplyr
+- We are going to use dplyr, another package you've installed, to help us transform data
+- The most super-useful dplyr functions:
+- =filter()= drops rows based on columns
+- =select()=  selects columns
+- =mutate()=  creates new variables
+- =summarize()= return statistics
+- =group_by()= allows us to do the above by groups
+-These functions take data as the first argument and always return a data.frame
+#+BEGIN_SRC R
+  library(dplyr)
+#+END_SRC
+** =filter=
+- =filter()= uses logical statements (that are TRUE) to return rows:
+#+BEGIN_SRC R
+  filter(gapminder, continent == "Asia")
+  filter(gapminder, continent == "Asia" & year >= 2000)
+  filter(gapminder, continent == "Asia" & year != 2000)
+  filter(gapminder, continent == "Asia" | year == 2000)
+#+END_SRC
+** Quiz
+- Use filter to return all the rows containing observations from Asia or Africa
+\pause
+#+BEGIN_SRC R
+  filter(gapminder, continent == "Asia" | continent == "Africa")
+  filter(gapminder, continent %in% c("Asia", "Africa"))
+#+END_SRC
+** =select=
+- The =select= function selects one or more columns:
+#+BEGIN_SRC R
+  select(gapminder, country)
+  select(gapminder, country, year, continent)
+  select(gapminder, -continent)
+#+END_SRC
+- several helper functions (e.g. =starts_with=), see =?select= for examples
+** =mutate=
+- Mutate creates new variables:
+#+BEGIN_SRC R :exports both :results output
+  mutate(gapminder, gdp = pop * gdpPercap)
+#+END_SRC
+** =summarize=
+- =summarize= (or =summarise= if you prefer) creates summary statistics:
+#+BEGIN_SRC R :exports both :results output
+  summarize(gapminder, mean_life = mean(lifeExp))
+#+END_SRC
+** =group_by=
+- All the functions we just learned can be performed by groups!
+- This is really exciting and makes life much easier
+- Calculate mean life expectancy by year:
+#+BEGIN_SRC R
+  summarize(group_by(gapminder, year), mean_life = mean(lifeExp))
+  ## Or, to add it to the data:
+  mutate(group_by(gapminder, year), year_mean_life = mean(lifeExp))
+#+END_SRC
+** =group_by=, continued
+- You can group by multiple variables
+- Calculate change in life expectancy by country:
+#+BEGIN_SRC R
+    mutate(group_by(gapminder, country),
+           life_change = lifeExp - lag(lifeExp))
+#+END_SRC
+** Chaining
+- What if we want to select all countries in Africa and calculate mean life expectancy by year?
+- One option:
+#+BEGIN_SRC R :eval no
+  summarize(group_by(filter(gapminder,
+                            continent == "Africa"),
+                     year),
+            mean_life = mean(lifeExp))
+#+END_SRC
+- Or we could assign to objects along the way
+#+BEGIN_SRC R :eval no
+  just_africa <- filter(gapminder,continent == "Africa"),
+  africa_by_year <- group_by(just_africa, year)
+  summarize(africa_by_year, mean_life = mean(lifeExp))
+#+END_SRC
+** Piping
+- Both of those have downsides, though
+- We'll use the /pipe/ =%>%= to "pipe" the thing on the left into the thing on the right:
+#+BEGIN_SRC R :eval no
+  gapminder %>%
+    filter(continent == "Africa") %>%
+    group_by(year) %>%
+    summarize(meanlife = mean(lifeExp))
 #+END_SRC
