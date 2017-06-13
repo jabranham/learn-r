@@ -40,7 +40,7 @@
 - If you have R and Rstudio installed, open Rstudio.
 - You should see three panes.
 - We'll focus for now on the console, which is on the left and should look something like this:
-** 
+** The console
 #+BEGIN_EXAMPLE
   R version 3.4.0 (2017-06-15) -- "You Stupid Darkness"
   Copyright (C) 2017 The R Foundation for Statistical Computing
@@ -51,6 +51,8 @@
   Type 'demo()' for some demos, 'help()' for on-line help, or
   'help.start()' for an HTML browser interface to help.
   Type 'q()' to quit R.
+
+  >
 #+END_EXAMPLE
 ** R is a big giant calculator
 - R can do math
@@ -221,6 +223,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 ** More about aesthetics
 - There are more aesthetic mappings
 - Try =size=, and =alpha= (transparency) for yourself
+\pause
 - You can set aesthetics directly by mapping the aesthetic to a value /outside the call to aes()/ 
 - For example, we may want to make the dots slightly transparent to avoid overplotting
 ** Aesthetics not mapped to variable
@@ -307,6 +310,25 @@ What's the relationship between wealth (gdp) and average life expectancy?
 ** 
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life-smooth.pdf]]
+** geoms
+- Hey, that last plot looked pretty linear
+- We can use OLS instead:
+\pause
+#+BEGIN_SRC R
+  ggplot(data = gapminder) +
+    geom_smooth(mapping = aes(x = log(gdpPercap),
+                              y = lifeExp),
+                method = "lm")
+
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/gdp-life-smooth-lm.pdf",
+         width = 9,
+         height = 6.5)
+#+END_SRC
+**
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/gdp-life-smooth-lm.pdf]]
 ** geoms and aesthetics
 - Note that different aesthetics are available for different geoms
 - So while =linetype= didn't really make sense for our scatterplot, it makes total sense for a line:
@@ -315,7 +337,9 @@ What's the relationship between wealth (gdp) and average life expectancy?
   ggplot(data = gapminder) +
     geom_smooth(mapping = aes(x = log(gdpPercap),
                               y = lifeExp,
-                              linetype = continent)) 
+                              color = continent,
+                              linetype = continent),
+                method = "lm")
 
 #+END_SRC
 #+BEGIN_SRC R :exports none
@@ -361,9 +385,16 @@ What's the relationship between wealth (gdp) and average life expectancy?
          width = 9,
          height = 6.5)
 #+END_SRC
-** 
+**
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life-smooth-point-color.pdf]]
+** Review
+- ggplot2 provides a very flexible way to make high-quality graphics
+- stuff we didn't look at:
+  - Lots of different geoms
+  - Changing scales
+  - Position
+  - How to save to include in your paper (later, I promise!)
 * Basic R
 ** Basics
 - We skipped all of this because plotting is more fun & I wanted to start with something fun 
@@ -375,6 +406,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 #+END_SRC
 - But R doesn't "remember" the answer to that anywhere
 - You must /assign/ the output to an object in order for R to remember it:
+- *Tip*: In Rstudio, use alt+- (option+-) to get =<-=
 #+BEGIN_SRC R
   x <- 3 * 3 + 29 ^ 4 + 7
   my_name <- "Alex Branham"
@@ -505,7 +537,16 @@ What will be the result?
 #+BEGIN_SRC R :exports both :results output
   head(gapminder$continent)
 #+END_SRC
-
+** Data type quiz
+What type of data are the following?
+#+BEGIN_SRC R
+  182
+  c("My name is Alex")
+  "TRUE"
+  FALSE
+  c(1, 2, 3)
+  c(1, "Alex", TRUE)
+#+END_SRC
 ** Data dimensions
 What's the difference?
 #+BEGIN_SRC R :results output :exports results
@@ -530,10 +571,15 @@ What's the difference?
   gapminder[, "country"] # select by name
   gapminder$country # slightly different
 #+END_SRC
+** Review
+- What we learned
+- Missingness propagates
+- Functions & arguments
+- Basic vectors: numeric, logical, character, factor
+- Dimensions & the data.frame
 * Data import & manipulation
 ** Importing data
-- We'll cover how to import rectangular data
-- R can handle other types of data, but it's outside the scope of this class
+- Importing data in R is either trivially easy (usually) or super specific and difficult (rarely), so we won't actually be doing this
 - R has a lot of build in functions: =read.csv()=, =read.table()=, etc
 - Packages provide still more: =readr::read_csv()=, =haven::read_dta()=, etc
 - I prefer the =rio= package because I don't have to think
@@ -551,7 +597,7 @@ What's the difference?
 - =mutate()=  creates new variables
 - =summarize()= return statistics
 - =group_by()= allows us to do the above by groups
--These functions take data as the first argument and always return a data.frame
+-These functions take data as the first argument and always return a data.frame[fn:1]
 #+BEGIN_SRC R
   library(dplyr)
 #+END_SRC
@@ -592,7 +638,7 @@ What's the difference?
 - All the functions we just learned can be performed by groups!
 - This is really exciting and makes life much easier
 - Calculate mean life expectancy by year:
-#+BEGIN_SRC R
+#+BEGIN_SRC R :results output :exports both
   summarize(group_by(gapminder, year), mean_life = mean(lifeExp))
   ## Or, to add it to the data:
   mutate(group_by(gapminder, year), year_mean_life = mean(lifeExp))
@@ -600,7 +646,7 @@ What's the difference?
 ** =group_by=, continued
 - You can group by multiple variables
 - Calculate change in life expectancy by country:
-#+BEGIN_SRC R
+#+BEGIN_SRC R :results output :exports both
     mutate(group_by(gapminder, country),
            life_change = lifeExp - lag(lifeExp))
 #+END_SRC
@@ -613,6 +659,7 @@ What's the difference?
                      year),
             mean_life = mean(lifeExp))
 #+END_SRC
+\pause
 - Or we could assign to objects along the way
 #+BEGIN_SRC R :eval no
   just_africa <- filter(gapminder,continent == "Africa"),
@@ -622,9 +669,52 @@ What's the difference?
 ** Piping
 - Both of those have downsides, though
 - We'll use the /pipe/ =%>%= to "pipe" the thing on the left into the thing on the right:
+- *Tip:* In Rstudio, use Ctrl+shift+m (Cmd+shift+m) to get =%>%=
 #+BEGIN_SRC R :eval no
   gapminder %>%
     filter(continent == "Africa") %>%
     group_by(year) %>%
     summarize(meanlife = mean(lifeExp))
 #+END_SRC
+** Quiz
+- Create a data.frame containing the continent, year, avg life expectancy, and change in avg life expectancy
+** Quiz answers
+#+BEGIN_SRC R :exports both :results output
+  gapminder %>%
+    group_by(continent, year) %>%
+    summarize(avg_life = mean(lifeExp)) %>%
+    mutate(change_life = avg_life - lag(avg_life))
+#+END_SRC
+** Other data manipulation
+- Those commands take care of the most common data manipulation tasks
+- There's tons more but we don't have the time to go over them all
+- Search engines and R's help are your friend
+** Review
+- We learned how to use some of the most common =dplyr= functions to manipulate data (filter, select, mutate, summarize)
+- =group_by= makes doing this by groups super easy
+- Piping can make it easier to read code
+* Reporting from R
+** Reporting
+- We've reviewed most of what you need to do data analysis!
+- Now let's do a new analysis on how to report, so we'll learn
+  - How to report
+  - Review much of what we learned
+  - Learn a few more tricks and tips
+- Right now is a good time to "restart" R (close and reopen is one way)
+** New data
+- Let's change the dataset we're using, just for something new:
+- We'll use the =midwest= dataset from =ggplot2=, which has info on some U.S. midwest counties:
+#+BEGIN_SRC R
+  library(dplyr); library(ggplot2)
+  midwest
+#+END_SRC
+** Descriptive statistics
+** Plot 1
+** Linear regression
+** Linear regression table
+** Plot 2
+** Review
+** Thanks for coming!
+* Footnotes
+
+[fn:1] Technically, a =tibble=, but the difference isn't very much, so we'll ignore that
