@@ -13,6 +13,7 @@
 #+BEAMER_THEME: metropolis[titleformat=smallcaps, progressbar=frametitle]
 #+BEGIN_SRC R :exports none
   dir.create("figures/", showWarnings = FALSE)
+  dir.create("tables/", showWarnings = FALSE)
 #+END_SRC
 
 * Course Information
@@ -124,6 +125,8 @@ head(gapminder)
 #+BEGIN_SRC R :exports both :results output
 summary(gapminder)
 #+END_SRC
+** Descriptive statistics, continued
+-
 ** Graphics in R
 - Let's start making graphs
 - This is the fun part!
@@ -224,7 +227,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 - There are more aesthetic mappings
 - Try =size=, and =alpha= (transparency) for yourself
 \pause
-- You can set aesthetics directly by mapping the aesthetic to a value /outside the call to aes()/ 
+- You can set aesthetics directly by mapping the aesthetic to a value */outside/* the call to =aes()=
 - For example, we may want to make the dots slightly transparent to avoid overplotting
 ** Aesthetics not mapped to variable
 #+BEGIN_SRC R
@@ -326,7 +329,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
          width = 9,
          height = 6.5)
 #+END_SRC
-**
+** 
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life-smooth-lm.pdf]]
 ** geoms and aesthetics
@@ -385,7 +388,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
          width = 9,
          height = 6.5)
 #+END_SRC
-**
+** 
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life-smooth-point-color.pdf]]
 ** Review
@@ -404,15 +407,20 @@ What's the relationship between wealth (gdp) and average life expectancy?
 #+BEGIN_SRC R :exports both :results output
   3 * 3 + 29 ^ 4 + 7
 #+END_SRC
+\pause
 - But R doesn't "remember" the answer to that anywhere
+\pause
 - You must /assign/ the output to an object in order for R to remember it:
-- *Tip*: In Rstudio, use alt+- (option+-) to get =<-=
+\pause
 #+BEGIN_SRC R
   x <- 3 * 3 + 29 ^ 4 + 7
   my_name <- "Alex Branham"
 #+END_SRC
+\pause
+- *Tip*: In Rstudio, use alt+- (option+-) to get =<-=
 ** Wait, what?
 - Yeah, I just assigned letters to an object
+\pause
 - We can inspect the contents of an object by typing it into the R console:
 #+BEGIN_SRC R :exports both :results output
   x
@@ -586,9 +594,38 @@ What's the difference?
 - Always gives you a =data.frame=:
 #+BEGIN_SRC R :eval no
   library(rio)
-  csv_data <- import("data/file.csv")
-  stata_data <- import("data/file.dta")
+  csv_data <- import("file.csv")
+  stata_data <- import("file.dta")
 #+END_SRC
+** Working directories & project structure
+- R has the concept of a "working directory"
+- You can see where this is by typing =getwd()= into the console
+- I like to store data and code in separate folders:
+- *Tip*: Rstudio can manage "projects" that take care of a lot of this
+** Simple project structure
+#+BEGIN_EXAMPLE
+  my-paper-project/
+  |--- code/
+  |    |--- my-script.R
+  |    |--- my-alt-script.R
+  |--- data/
+  |    |--- awesome-data.csv
+  |--- output/
+  |    |--- figure1.eps
+  |    |--- figure2.eps
+  |    |--- table1.tex
+  |    |--- table2.tex
+  |--- my-paper.tex
+#+END_EXAMPLE
+** Relative paths
+- If you have code like that, you need to know what a relative path is so that code in your ~code/~ directory can load data in your ~data/~ directory!
+\pause
+- So if we're running a file from ~code/~ (that's the working directory), we can load data by doing:
+#+BEGIN_SRC R :eval no
+  my_awesome_data <- import("../data/awesome_data.csv")
+#+END_SRC
+\pause
+- Two dots =..= says "go up one directory", we could chain them to go up two: =../..=
 ** dplyr
 - We are going to use dplyr, another package you've installed, to help us transform data
 - The most super-useful dplyr functions:
@@ -634,24 +671,35 @@ What's the difference?
 #+BEGIN_SRC R :exports both :results output
   summarize(gapminder, mean_life = mean(lifeExp))
 #+END_SRC
+\pause
+- Though whoop-de-doo, we could've just done =mean(gapminder$lifeExp)= to get that!
+\pause
+- Much more useful if we do this by groups
 ** =group_by=
 - All the functions we just learned can be performed by groups!
 - This is really exciting and makes life much easier
 - Calculate mean life expectancy by year:
+\pause
 #+BEGIN_SRC R :results output :exports both
   summarize(group_by(gapminder, year), mean_life = mean(lifeExp))
   ## Or, to add it to the data:
   mutate(group_by(gapminder, year), year_mean_life = mean(lifeExp))
 #+END_SRC
 ** =group_by=, continued
-- You can group by multiple variables
 - Calculate change in life expectancy by country:
 #+BEGIN_SRC R :results output :exports both
     mutate(group_by(gapminder, country),
            life_change = lifeExp - lag(lifeExp))
 #+END_SRC
+** =group_by=, continued
+- You can group by multiple variables
+#+BEGIN_SRC R :results output :exports both
+  summarize(group_by(gapminder, continent, year),
+            mean_life = mean(lifeExp))
+#+END_SRC
 ** Chaining
 - What if we want to select all countries in Africa and calculate mean life expectancy by year?
+\pause
 - One option:
 #+BEGIN_SRC R :eval no
   summarize(group_by(filter(gapminder,
@@ -668,12 +716,20 @@ What's the difference?
 #+END_SRC
 ** Piping
 - Both of those have downsides, though
+\pause
 - We'll use the /pipe/ =%>%= to "pipe" the thing on the left into the thing on the right:
 - *Tip:* In Rstudio, use Ctrl+shift+m (Cmd+shift+m) to get =%>%=
+\pause
 #+BEGIN_SRC R :eval no
   gapminder %>%
     filter(continent == "Africa") %>%
+#+END_SRC
+\pause
+#+BEGIN_SRC R :eval no
     group_by(year) %>%
+#+END_SRC
+\pause
+#+BEGIN_SRC R :eval no
     summarize(meanlife = mean(lifeExp))
 #+END_SRC
 ** Quiz
@@ -709,12 +765,123 @@ What's the difference?
   midwest
 #+END_SRC
 ** Descriptive statistics
+- Let's look at the relationship between college education and the percent living in poverty. And maybe this looks different in metro areas, so let's keep that in mind too.
+\pause
+- I always like to show some descriptive statistics:
+#+BEGIN_SRC R
+  midwest %>%
+    select(percbelowpoverty, percollege, inmetro) %>%
+    summarize_all(funs(mean, sd))
+#+END_SRC
+\pause
+- But what if we want to show that in our paper?
+\pause
+- There are several packages that let you easily make \LaTeX   tables, let's use =stargazer=:
+#+BEGIN_SRC R
+  library(stargazer)
+#+END_SRC
+- Can handle Word too, need to do an html dance. See package docs.
+** Descriptive stats, latex table:
+# Here there's a trick: I want to show relative paths using the dir structure
+# from before, but that's not what I'm *actually* using
+#+BEGIN_SRC R :eval no :exports both :results output
+  midwest %>%
+    select(percbelowpoverty, percollege, inmetro) %>%
+    ## stargazer is picky about tibbles vs data.frames
+    as.data.frame %>%
+    stargazer(out = "../output/desc-stats.tex",
+              title = "Descriptive Statistics")
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  midwest %>%
+    select(percbelowpoverty, percollege, inmetro) %>%
+    as.data.frame %>%
+    stargazer(out = "tables/desc-stats.tex",
+              title="Descriptive Statistics")
+#+END_SRC
+** Descriptive stats, latex table result
+- use =\input{tables/desc-stats.tex}= to import the table into your paper
+#+BEGIN_EXPORT latex
+\input{tables/desc-stats.tex}
+#+END_EXPORT
 ** Plot 1
+- Let's make a scatterplot!
+\pause
+- Make a scatterplot with =percbelowpoverty= on the y-axis and include info on =percollege= and =inmetro=
+
+** Plot 1, simple
+#+BEGIN_SRC R
+  midwest %>%
+    select(percbelowpoverty, percollege, inmetro) %>%
+    ## inmetro is a number but needs to be discrete.
+    ## as.logical will convert so that a 0 is FALSE
+    mutate(inmetro = as.logical(inmetro)) %>%
+    ggplot(aes(percbelowpoverty, percollege,
+               color = inmetro,
+               shape = inmetro)) +
+    geom_point()
+#+END_SRC
+** Plot 1, full
+#+BEGIN_SRC R
+  midwest %>%
+    select(percbelowpoverty, percollege, inmetro) %>%
+    mutate(inmetro = as.logical(inmetro)) %>%
+    ggplot(aes(percbelowpoverty, percollege,
+               color = inmetro,
+               shape = inmetro)) +
+    geom_point() +
+    scale_color_discrete(labels = c("Rural", "Urban"), name = "") +
+    scale_shape_discrete(labels = c("Rural", "Urban"), name = "") +
+    labs(y = "Percent below poverty line",
+         x = "Percent with a college education") +
+    theme_bw()
+#+END_SRC
+** How to save ggplots
+- The =ggsave= function saves a plot (by default, the last one you plotted)
+- It's important to specify the width and height
+#+BEGIN_SRC R :eval no
+  ggsave("../output/my-scatterplot.eps",
+         ## Important to specify!!!
+         width = 9, height = 6.5)
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/my-scatterplot.pdf",
+         ## Important to specify!!!
+         width = 9, height = 6.5)
+#+END_SRC
+
+** Plot 1, result
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/my-scatterplot.pdf]]
 ** Linear regression
+- Let's run a linear predicting poverty with education and include an interaction term for inmetro
+  - Yes, I'm ignoring all kinds of issues with this particular model
+ #+BEGIN_SRC R
+   my_reg <- lm(percbelowpoverty~percollege * inmetro,
+               data= midwest)
+   summary(my_reg)
+ #+END_SRC
+
 ** Linear regression table
-** Plot 2
-** Review
+#+BEGIN_SRC R :eval no
+  stargazer(my_reg,
+            out = "../output/my-reg.tex")
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  stargazer(my_reg,
+            out = "tables/my-reg.tex")
+#+END_SRC
+
+** Linear regression table, result
+- Use =\input{output/my-reg.tex}=
+#+BEGIN_EXPORT latex
+\input{tables/my-reg.tex}
+#+END_EXPORT
+
 ** Thanks for coming!
+:PROPERTIES:
+:BEAMER_OPTS: label=thanks,standout
+:END:
 * Footnotes
 
 [fn:1] Technically, a =tibble=, but the difference isn't very much, so we'll ignore that
