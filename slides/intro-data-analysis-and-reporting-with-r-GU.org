@@ -674,11 +674,9 @@ What's the difference?
 - We are going to use dplyr, another package you've installed, to help us transform data
 #+LATEX: \pause
 - =filter()= drops rows based on columns
-#+LATEX: \pause
 - =select()=  selects columns
 #+LATEX: \pause
 - =mutate()=  creates new variables
-#+LATEX: \pause
 - =summarize()= return statistics
 #+LATEX: \pause
 - =group_by()= allows us to do the above by groups
