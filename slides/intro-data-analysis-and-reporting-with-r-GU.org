@@ -11,6 +11,7 @@
 #+LATEX_CLASS_OPTIONS: [colorlinks, urlcolor=blue, aspectratio=169]
 #+PROPERTY: header-args:R :session *R*
 #+BEAMER_THEME: metropolis[titleformat=smallcaps, progressbar=frametitle]
+#+PROPERTY: header-args:R :results output
 #+BEGIN_SRC R :exports none
   dir.create("figures/", showWarnings = FALSE)
   dir.create("tables/", showWarnings = FALSE)
@@ -616,8 +617,8 @@ What's the difference?
 ** Indexing data.frame
 #+BEGIN_SRC R :eval no
   gapminder[2, 1] # get whatever is in the second row, 1st col
-  gapminder[1, ]  # get the first col (all)
-  gapminder[, 1]  # get the first row (all)
+  gapminder[1, ]  # get the first row (all)
+  gapminder[, 1]  # get the first col (all)
   gapminder[, "country"] # select by name
   gapminder$country # slightly different
 #+END_SRC
@@ -810,7 +811,8 @@ What's the difference?
   - How to report
   - Review much of what we learned
   - Learn a few more tricks and tips
-- Right now is a good time to "restart" R (close and reopen is one way)
+- Right now is a good time to "restart" R and to make a project
+- I put mine in =~/research/awesome-paper/= but you can put yours wherever!
 ** New data
 - Let's change the dataset we're using, just for something new:
 - We'll use the =midwest= dataset from =ggplot2=, which has info on some U.S. midwest counties:
@@ -821,7 +823,72 @@ What's the difference?
 ** Descriptive statistics
 - Let's look at the relationship between college education and the percent living in poverty. And maybe this looks different in metro areas, so let's keep that in mind too.
 #+LATEX: \pause
-- I always like to show some descriptive statistics:
+- I always like to show some descriptive statistics
+- Find the mean and standard deviation of our three variables!
+#+ \pause
+#+BEGIN_SRC R
+  midwest %>%
+    select(percbelowpoverty, percollege, inmetro) %>%
+    summarize_all(funs(mean, sd))
+#+END_SRC
+
+** Functions
+- What if we want another function other than mean, sd, etc?
+- Very likely that it's either in base R or someone has written it
+- Or you can write a function yourself!
+- This is actually really easy in R
+** Custom functions
+- Let's pretend R didn't have a =mean= function
+- How would we write it?
+- What do we need to find?
+#+LATEX: \pause
+$$ \frac{1}{n} \sum x  $$
+#+LATEX: \pause
+#+BEGIN_SRC R
+  sum(x) / length(x)
+#+END_SRC
+** Custom functions
+#+BEGIN_SRC R :exports both
+  my_mean <- function(x){
+    sum(x) / length(x)
+  }
+  my_mean(c(-1:10))
+#+END_SRC
+#+LATEX: \pause
+But what about NA???
+** If statements
+- An =if= statement allows us to conditionally execute code
+#+BEGIN_SRC R
+  my_name <- "Alex"
+  if (my_name == "Alex"){
+    print("I'm Alex!!!")
+  } else{
+    print("You aren't Alex!!!")
+  }
+#+END_SRC
+** Back to the NA problem
+How to modify our function???
+#+BEGIN_SRC R
+  my_mean <- function(x){
+    sum(x) / length(x)
+  }
+#+END_SRC
+#+LATEX: \pause
+- *Solution:* Use an if statement! But we gotta let the user tell us whether to remove NA...
+** Arguments and defaults
+#+BEGIN_SRC R
+  my_mean <- function(x, na.rm = FALSE){
+    if(na.rm){ x <- x[!is.na(x)]}
+    sum(x) / length(x)
+  }
+#+END_SRC
+** Test your functions
+Always test a function to make sure it works!
+#+BEGIN_SRC R
+  my_mean(c(NA, 0, 1), TRUE)
+  my_mean(c(NA, 0, 1), FALSE)
+#+END_SRC
+** Back to our regularly scheduled program...
 #+BEGIN_SRC R
   midwest %>%
     select(percbelowpoverty, percollege, inmetro) %>%
@@ -866,7 +933,7 @@ What's the difference?
 
 ** Plot 1, simple
 #+BEGIN_SRC R
-  midwest %>%
+  g <- midwest %>%
     select(percbelowpoverty, percollege, inmetro) %>%
     ## inmetro is a number but needs to be discrete.
     ## as.logical will convert so that a 0 is FALSE
@@ -875,6 +942,63 @@ What's the difference?
                color = inmetro,
                shape = inmetro)) +
     geom_point()
+#+END_SRC
+
+** More about graphs
+- Note that I assigned the plot to an object =g=
+- We might want to change some more stuff about the graph (legends, assign colors, etc)
+- This way I don't have to re-run the same code
+** Adjust the scale
+- You may want to change the color, label legends, etc
+- use =scale_aes_type= to do so
+- So, for example, we can do =scale_color_manual= to change the properties of the color scale.
+- Let's change it so that metro areas are blue and rural areas are red:
+#+BEGIN_SRC R
+  ## Plain red is super harsh, let's scale it back a bit:
+  g + scale_color_manual(values = c("red3", "blue"))
+#+END_SRC
+
+** Changing legend labels
+- Of course, =FALSE= and =TRUE= are not good legend labels. We can change those too with the =scale_color_manual= command:
+#+BEGIN_SRC R
+  g + scale_color_manual(values = c("red3", "blue"),
+                         labels = c("Rural", "Urban"))
+#+END_SRC
+
+** UGHHHHHHHHH
+- Now the legends are separate, though. Need to tell the shape aesthetic to use the same labels!
+- While we're at it, let's remove the legend title (name):
+- Since we're done changing the scales, let's reassign =g=
+#+BEGIN_SRC R
+  g <- g + scale_color_manual(values = c("red3", "blue"),
+                             labels = c("Rural", "Urban"),
+                             name = "") +
+    scale_shape_discrete(labels = c("Rural", "Urban"),
+                         name = "")
+#+END_SRC
+** Axis labels
+- We should probably fix up our axis labels
+- Note that if you want to give the plot a title, subtitle, or caption, you may do so here
+#+BEGIN_SRC R
+  g <- g + labs(x = "Percent below poverty",
+               y = "Percent with a college degree")
+#+END_SRC
+** Background and themes
+- I'm not a fan of the default grey background.
+- You can adjust everything yourself, but there are several themes that come built-in
+- The package =ggthemes= has many other themes
+- You can make it look like you're graphing for the economist. Or from Stata
+** Much themes, wow
+#+BEGIN_SRC R
+  g + theme_grey()
+  g + theme_gray()
+  g + theme_bw()
+  g + theme_linedraw()
+  g + theme_light()
+  g + theme_dark()
+  g + theme_minimal()
+  g + theme_classic()
+  g + theme_void()
 #+END_SRC
 ** Plot 1, full
 #+BEGIN_SRC R
@@ -885,7 +1009,8 @@ What's the difference?
                color = inmetro,
                shape = inmetro)) +
     geom_point() +
-    scale_color_discrete(labels = c("Rural", "Urban"), name = "") +
+    scale_color_manual(values = c("red3", "blue"), labels = c("Rural", "Urban"),
+                       name = "") +
     scale_shape_discrete(labels = c("Rural", "Urban"), name = "") +
     labs(y = "Percent below poverty line",
          x = "Percent with a college education") +
@@ -912,8 +1037,8 @@ What's the difference?
 - Let's run a linear predicting poverty with education and include an interaction term for inmetro
   - Yes, I'm ignoring all kinds of issues with this particular model
  #+BEGIN_SRC R
-   my_reg <- lm(percbelowpoverty~percollege * inmetro,
-               data= midwest)
+   my_reg <- lm(percbelowpoverty ~ percollege * inmetro,
+               data = midwest)
    summary(my_reg)
  #+END_SRC
 
@@ -933,6 +1058,153 @@ What's the difference?
 #+BEGIN_EXPORT latex
 \input{tables/my-reg.tex}
 #+END_EXPORT
+** Multiple models
+- Oftentimes, we want multiple models
+- You can, of course, copy paste code, but that's error prone (typos, ugh), and difficult to change later on
+- There's an easy solution for this, but first let's talk about a data structure we haven't mentioned much yet:
+#+LATEX: \pause
+#+LATEX: \huge
+THE LIST
+** Lists
+- A list is one dimensions (like numeric, logical, character, factor)
+#+LATEX: \pause
+- But each element can be of a different type
+#+LATEX: \pause
+- We can create lists with the =list= command
+- Look at the difference:
+** Lists, continued
+#+BEGIN_SRC R :exports both :results output
+  c(3, TRUE, "Nancy")
+#+END_SRC
+#+BEGIN_SRC R :exports both :results output
+  list(3, TRUE, "Nancy")
+#+END_SRC
+** Lists, more
+- Subsetting lists can be a little weird
+- We use =[[=  or =[= to subset
+- First, create a list:
+#+BEGIN_SRC R
+  x <- list(c(1:10),
+           c(TRUE, NA, TRUE),
+           c("Bob", "Alice", "Nancy", "Drew"))
+#+END_SRC
+** Subsetting lists
+- What is the difference:
+#+BEGIN_SRC R
+  x[[1]]
+  x[1]
+#+END_SRC
+** Named lists
+- The double bracket contains the thing at the position, 
+- Single bracket returns a list of the thing at the position 
+- Elements of a list can have names:
+#+BEGIN_SRC R
+  names(x) <- c("nums", "logs", "chars")
+  ## Can also specify at creation time e.g. list(nums = 1:10) etc
+#+END_SRC
+** Named lists, continued
+#+BEGIN_SRC R :exports both :results output
+  x
+#+END_SRC
+** Subsetting named lists
+- We can now access elements of the list by name instead of by position:
+#+BEGIN_SRC R :exports both
+  x$chars
+#+END_SRC
+** Data frames are lists too!
+- Remember we can use =dataframe$varname= to access variables from a data frame?
+#+LATEX: \pause
+- Does this look similar to what we just did with lists?
+#+LATEX: \pause
+- That's because data frames are secretly lists themselves!
+** Back to modeling
+- OK, why did we just learn about lists?
+#+LATEX: \pause
+- We were modeling percent below poverty with an interaction between college education and metro area status
+#+LATEX: \pause
+- What if we want to "build the model" by including constituent variables one at a time?
+- One way:
+** Multiple models
+#+BEGIN_SRC R
+  model1 <- lm(percbelowpoverty ~ percollege, data = midwest)
+  model2 <- lm(percbelowpoverty ~ inmetro, data = midwest)
+  model3 <- lm(percbelowpoverty ~ percollege * inmetro, data = midwest)
+#+END_SRC
+** Multiple models
+- But if we do that, we now have three models just floating around.
+- To get summary measures:
+#+LATEX: \pause
+#+BEGIN_SRC R
+  summary(model1)
+  summary(model2)
+  summary(model3)
+#+END_SRC
+** Multiple models
+Y-hats:
+#+BEGIN_SRC R
+  predict(model1)
+  predict(model2)
+  predict(model3)
+#+END_SRC
+** The problem
+- That's just with three models!
+- Sometimes we run many more and the problem only gets worse!
+#+LATEX: \pause
+- *Idea!* let's use the list to make life easier!
+** Multiple models with a list
+#+BEGIN_SRC R
+  my_formulae <- list(model1 = percbelowpoverty ~ percollege,
+                     model2 = percbelowpoverty ~ inmetro,
+                     model3 = percbelowpoverty ~ percollege * inmetro)
+#+END_SRC
+** Run the models!
+- Base R provides =lapply= which iterates over lists
+#+BEGIN_SRC R
+  my_regs <- lapply(my_formulae,
+                   function(l_ele){lm(l_ele, data = midwest)})
+#+END_SRC
+- First argument is a list, second is a function to apply to each element of the list
+- We use an /anonymous function/ - one that we create on the fly. You could've created a named function too like we did with =my_mean= previously
+** Run the models!
+- I don't really like that syntax though so I use =map= from the =purrr= package.
+- This will do the same thing; the tilde magically creates an anonymous function in the background
+#+BEGIN_SRC R
+  my_regs <- map(my_formulae, ~ lm(.x, data = midwest))
+#+END_SRC
+** Summarize the models
+#+BEGIN_SRC R
+  map(my_regs, summary)
+#+END_SRC
+** Get predicted values
+#+BEGIN_SRC R
+  map(my_regs, predict)
+#+END_SRC
+** Get residuals
+#+BEGIN_SRC R
+  map(my_regs, residuals)
+#+END_SRC
+** Broom
+The broom package has three functions that turns models into data.frames:
+1. =glance()= returns a row with model quality/complexity
+2. =tidy()= returns a row for each coefficient
+3. =augment()= returns a row for every row in the data, adding some values (usually residuals and the like)
+** Get fit statistics
+#+BEGIN_SRC R :eval no
+  map(my_regs, broom::glance)
+#+END_SRC
+** broom::tidy
+#+BEGIN_SRC R :eval no
+  map(my_regs, broom::tidy)
+#+END_SRC
+** broom::augment
+#+BEGIN_SRC R :eval no
+  map(my_regs, broom::augment)
+#+END_SRC
+** Merging
+- What if we want to merge that info from augment back into the original data frame?
+- Dplyr also provides functions for merging (joining) data.frames!
+
+
 ** 
 :PROPERTIES:
 :BEAMER_OPT: label=thanks,standout
