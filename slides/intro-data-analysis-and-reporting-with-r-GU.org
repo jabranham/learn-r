@@ -15,14 +15,20 @@
   dir.create("figures/", showWarnings = FALSE)
   dir.create("tables/", showWarnings = FALSE)
 #+END_SRC
-
+#+BEGIN_EXPORT html
+This is an html page so that it is easier to search and copy/paste. It won't include the figures and tables but should include all the relevant code.
+#+END_EXPORT
 * Course Information
 ** Course Information
 - We'll cover tools that should be helpful in nearly any analysis
   - Graphing, data manipulation, etc
 - We won't cover specialized, specific tools. But you should get a good enough understanding of how R works to be able to teach yourself these
 ** Outline
-- TODO
+1. What is R?
+2. Graphics
+3. Basic R
+4. Data manipulation
+5. Reporting (time permitting)
 * What is R?
 ** What is R?
 - This is a course about R...  /mais qu'est-ce que c'est/?
@@ -31,6 +37,7 @@
   - S first appeared in 1976!
 - /R is a language/ ... so be prepared for it to hurt a bit to learn!
 ** Advantages of R
+#+LATEX: \pause
 - Free
 - Open-source
 - Available on nearly every platform
@@ -101,19 +108,24 @@
 
 * Graphics in R
 ** Data Analysis with R
-- Let's take a look at some data.
+- We need some data to work with
+#+LATEX: \pause
 - We're going to use some data that comes with the =gapminder= package you just installed
+#+LATEX: \pause
 - To access the data, you need to load it into memory:
 #+BEGIN_SRC R
 library(gapminder)
 #+END_SRC
 ** Exploring our data
 - =gapminder= is a *data.frame*
+#+LATEX: \pause
 - Can get a sense of what it looks like with some *functions*
+#+LATEX: \pause
 - Let's get a sense of what =gapminder= has:
 #+BEGIN_SRC R :eval no
   View(gapminder)
 #+END_SRC
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
 head(gapminder)
 #+END_SRC
@@ -121,12 +133,10 @@ head(gapminder)
 - R has lots of built-in functions for getting a sense of the data.
 - Try running =summary(gapminder)=
 - What's the average life expectancy?
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
 summary(gapminder)
 #+END_SRC
-** Descriptive statistics, continued
--
 ** Graphics in R
 - Let's start making graphs
 - This is the fun part!
@@ -145,7 +155,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 - Use the =ggplot()= function to start a plot.
 - The first /argument/ is to tell it the /data/
 - *Tip:* use =?ggplot= to look at the help page, where you can see the names of the arguments
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :eval no
   ggplot(data = gapminder) # Please use gapminder data
 #+END_SRC
@@ -153,7 +163,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 - =ggplot()= by itself is pretty useless, it just starts a plot
 - We then have to tell =ggplot= what to draw!
 - *Tip:* =?geom_point=
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
     ggplot(data = gapminder) +
       geom_point(mapping = aes(x = gdpPercap, # Put gdp on x axis
@@ -170,7 +180,8 @@ What's the relationship between wealth (gdp) and average life expectancy?
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life.pdf]]
 ** Fix that x axis!
-
+- Is there a better way to show this relationship?
+#+LATEX: \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
     geom_point(mapping = aes(x = log(gdpPercap), # Log x-axis
@@ -184,10 +195,15 @@ What's the relationship between wealth (gdp) and average life expectancy?
 [[file:figures/gdp-life-logx.pdf]]
 ** Aesthetics
 - =ggplot()= creates a coordinate system
+#+LATEX: \pause
 - You can then add one or more layers to this to create a plot
+#+LATEX: \pause
 - We just added the =geom_point()= layer, which used the =x= and =y= aesthetics (=aes=) to add a layer of points to our plot
+#+LATEX: \pause
 - We can add more information to the aesthetics to convey more information like color, shape, and size.
+#+LATEX: \pause
 - Example: What if we want to convey info about relationship between wealth and life expectancy by continent?
+#+LATEX: \pause
 - One solution: add color by continent
 ** Color 
 #+BEGIN_SRC R
@@ -207,6 +223,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 [[file:figures/gdp-life-continent-color.pdf]]
 ** Multiple aesthetics - color & shape
 - Of course, some people are colorblind, and others don't print things in color, so may be nice to use something like shape in addition:
+#+LATEX: \pause
 
 #+BEGIN_SRC R
   ggplot(gapminder) +
@@ -226,7 +243,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 ** More about aesthetics
 - There are more aesthetic mappings
 - Try =size=, and =alpha= (transparency) for yourself
-\pause
+#+LATEX: \pause
 - You can set aesthetics directly by mapping the aesthetic to a value */outside/* the call to =aes()=
 - For example, we may want to make the dots slightly transparent to avoid overplotting
 ** Aesthetics not mapped to variable
@@ -251,7 +268,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 - So we can use aesthetics to add variables to our graph like =color=. 
 - We might also want to add variables by splitting up the graph based on values of another variables --- e.g. subfigures
 - If we want to use just one variable, use =facet_wrap()=
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
     geom_point(mapping = aes(x = log(gdpPercap),
@@ -270,7 +287,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 - ggplot can facet with two variables with one by row and the other by column
 - Use =facet_grid(row ~ column)= to do so
 - Our =gapminder= data aren't very well suited for this, but you could do something like:
-\pause
+#+LATEX: \pause
  #+BEGIN_SRC R
    ggplot(data = gapminder) +
      geom_point(mapping = aes(x = log(gdpPercap),
@@ -288,17 +305,23 @@ What's the relationship between wealth (gdp) and average life expectancy?
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/gdp-life-facet-continent-post2000.pdf]]
 ** ggplot
+#+LATEX: \pause
 - Review of what we've learned so far:
   - =ggplot()= creates a blank coordinate system
+#+LATEX: \pause
   - =aes()= helps us map variables to visual properties (x/y location, color, shape, etc)
+#+LATEX: \pause
   - =facet_wrap()= and =facet_grid()= help us convey variables via subfigures
+#+LATEX: \pause
 - But what about plots other than the scatterplot?
 ** geoms
 - A =geom= (geometrical object) is =ggplot='s way of representing data
+#+LATEX: \pause
 - We've been using =geom_point()= to represent data as points, e.g. a scatterplot
 - A =geom= is (usually) the thing we call the plot - line plots, bar plots, boxplots, etc
+#+LATEX: \pause
 - Let's plot the same relationship between wealth and life expectancy but using =geom_smooth()= rather than =geom_point()=:
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
     geom_smooth(mapping = aes(x = log(gdpPercap),
@@ -316,7 +339,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 ** geoms
 - Hey, that last plot looked pretty linear
 - We can use OLS instead:
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
     geom_smooth(mapping = aes(x = log(gdpPercap),
@@ -334,8 +357,9 @@ What's the relationship between wealth (gdp) and average life expectancy?
 [[file:figures/gdp-life-smooth-lm.pdf]]
 ** geoms and aesthetics
 - Note that different aesthetics are available for different geoms
+#+LATEX: \pause
 - So while =linetype= didn't really make sense for our scatterplot, it makes total sense for a line:
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
     geom_smooth(mapping = aes(x = log(gdpPercap),
@@ -355,7 +379,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 [[file:figures/gdp-life-smooth-continent.pdf]]
 ** multiple geoms
 - To add multiple geoms, just add them one after the other:
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder) +
     geom_smooth(mapping = aes(x = log(gdpPercap),
@@ -375,7 +399,7 @@ What's the relationship between wealth (gdp) and average life expectancy?
 [[file:figures/gdp-life-smooth-point.pdf]]
 ** inherit aes
 - Instead of retyping the =aes= mapping, we can specify a set of defaults in the =ggplot()= call, and overwrite (or add) then in each =geom= call:
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   ggplot(data = gapminder,
          mapping = aes(x = log(gdpPercap),
@@ -407,24 +431,25 @@ What's the relationship between wealth (gdp) and average life expectancy?
 #+BEGIN_SRC R :exports both :results output
   3 * 3 + 29 ^ 4 + 7
 #+END_SRC
-\pause
+#+LATEX: \pause
 - But R doesn't "remember" the answer to that anywhere
-\pause
+#+LATEX: \pause
 - You must /assign/ the output to an object in order for R to remember it:
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   x <- 3 * 3 + 29 ^ 4 + 7
   my_name <- "Alex Branham"
 #+END_SRC
-\pause
+#+LATEX: \pause
 - *Tip*: In Rstudio, use alt+- (option+-) to get =<-=
 ** Wait, what?
 - Yeah, I just assigned letters to an object
-\pause
+#+LATEX: \pause
 - We can inspect the contents of an object by typing it into the R console:
 #+BEGIN_SRC R :exports both :results output
   x
 #+END_SRC
+#+LATEX: \pause
 - Here, type =my_= then hit tab to have autocompletion
 #+BEGIN_SRC R :exports both :results output
   my_name
@@ -435,13 +460,16 @@ What's the relationship between wealth (gdp) and average life expectancy?
 - This indicates that R is waiting for you.
 - Cancel by mashing ~ESC~
 ** R is pedantic
+#+LATEX: \pause
 - You have to be really specific with R:
 #+BEGIN_SRC R :exports both :results output
 x
 #+END_SRC
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
 X
 #+END_SRC
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
 my_nam
 #+END_SRC
@@ -452,6 +480,7 @@ x
 #+BEGIN_SRC R :exports both :results output
 x / 1000
 #+END_SRC
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
 x
 #+END_SRC
@@ -459,12 +488,13 @@ x
 - Missing data is represented by =NA= in R
 - R thinks about this as "something that's there, but whose value we do not know"
 - Missingness propagates
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   mean(c(1, 2, NA))
 #+END_SRC
 ** Missingness quiz
-What will be the result?
+- What will be the result?
+- We'll learn more about logical statements in a bit, this asks "Is 3 equal to NA"?
 #+BEGIN_SRC R :eval no
   3 == NA
   NA == NA
@@ -481,10 +511,12 @@ What will be the result?
 #+BEGIN_EXAMPLE
   function(arg1 = object1, arg2 = object2, arg3 = object3)
 #+END_EXAMPLE
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   my_vector <- seq(from = 1, to = 10, by = 1)
   my_vector
 #+END_SRC
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   mean(x = my_vector)
 #+END_SRC
@@ -493,7 +525,7 @@ What will be the result?
   my_vector <- c(1, 2, 3, NA, NA, NA, 3, 2, 1)
   mean(x = my_vector)
 #+END_SRC
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   mean(x = my_vector, na.rm = TRUE)
 #+END_SRC
@@ -520,15 +552,19 @@ What will be the result?
 #+BEGIN_SRC R :exports both :results output
   class(c(1, 2, 3))
 #+END_SRC
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   sum(c(1, 2, 3))
 #+END_SRC
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   class(sum(c(1, 2, 3)))
 #+END_SRC
 ** Logical
 - Logical can take two values --- =TRUE= or =FALSE=
+#+LATEX: \pause
 - This is useful for dummy variables and tests
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   1:10 > 5
 #+END_SRC
@@ -541,7 +577,9 @@ What will be the result?
 #+END_SRC
 ** Factor
 - Factors are how R thinks about categorical variables
+#+LATEX: \pause
 - We already worked with these when we used the =continent= variable from =gapminder=
+#+LATEX: \pause
 #+BEGIN_SRC R :exports both :results output
   head(gapminder$continent)
 #+END_SRC
@@ -563,15 +601,19 @@ What's the difference?
 #+BEGIN_SRC R :results output :exports results
   matrix(c(1, 2, 3, 4, 5, 6), nrow = 3)
 #+END_SRC
+#+LATEX: \pause
 - Data can have *dimensions*
 - Numeric, logical, character, and factors are single dimensions (so are lists)
+#+LATEX: \pause
 - That matrix is a 3 by 2 matrix
 - Why might we want to have two-dimensional data?
-- Matrices must have the same type, but we can mix and match types with a =data.frame=
 ** The data.frame
+- Matrices must have the same type, but we can mix and match types with a =data.frame=
 - Remember =gapminder= from earlier?
 - We used a =data.frame= to store columns with different data types
-- We can access (index) =data.frame= objects using notation similar to matrix notation
+#+LATEX: \pause
+- We can access (index, subset) =data.frame= objects using notation similar to matrix notation:
+** Indexing data.frame
 #+BEGIN_SRC R :eval no
   gapminder[2, 1] # get whatever is in the second row, 1st col
   gapminder[1, ]  # get the first col (all)
@@ -588,8 +630,10 @@ What's the difference?
 * Data import & manipulation
 ** Importing data
 - Importing data in R is either trivially easy (usually) or super specific and difficult (rarely), so we won't actually be doing this
+#+LATEX: \pause
 - R has a lot of build in functions: =read.csv()=, =read.table()=, etc
 - Packages provide still more: =readr::read_csv()=, =haven::read_dta()=, etc
+#+LATEX: \pause
 - I prefer the =rio= package because I don't have to think
 - Always gives you a =data.frame=:
 #+BEGIN_SRC R :eval no
@@ -619,21 +663,26 @@ What's the difference?
 #+END_EXAMPLE
 ** Relative paths
 - If you have code like that, you need to know what a relative path is so that code in your ~code/~ directory can load data in your ~data/~ directory!
-\pause
+#+LATEX: \pause
 - So if we're running a file from ~code/~ (that's the working directory), we can load data by doing:
 #+BEGIN_SRC R :eval no
   my_awesome_data <- import("../data/awesome_data.csv")
 #+END_SRC
-\pause
+#+LATEX: \pause
 - Two dots =..= says "go up one directory", we could chain them to go up two: =../..=
 ** dplyr
 - We are going to use dplyr, another package you've installed, to help us transform data
-- The most super-useful dplyr functions:
+#+LATEX: \pause
 - =filter()= drops rows based on columns
+#+LATEX: \pause
 - =select()=  selects columns
+#+LATEX: \pause
 - =mutate()=  creates new variables
+#+LATEX: \pause
 - =summarize()= return statistics
+#+LATEX: \pause
 - =group_by()= allows us to do the above by groups
+#+LATEX: \pause
 -These functions take data as the first argument and always return a data.frame[fn:1]
 #+BEGIN_SRC R
   library(dplyr)
@@ -648,7 +697,7 @@ What's the difference?
 #+END_SRC
 ** Quiz
 - Use filter to return all the rows containing observations from Asia or Africa
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   filter(gapminder, continent == "Asia" | continent == "Africa")
   filter(gapminder, continent %in% c("Asia", "Africa"))
@@ -671,15 +720,15 @@ What's the difference?
 #+BEGIN_SRC R :exports both :results output
   summarize(gapminder, mean_life = mean(lifeExp))
 #+END_SRC
-\pause
+#+LATEX: \pause
 - Though whoop-de-doo, we could've just done =mean(gapminder$lifeExp)= to get that!
-\pause
+#+LATEX: \pause
 - Much more useful if we do this by groups
 ** =group_by=
 - All the functions we just learned can be performed by groups!
 - This is really exciting and makes life much easier
 - Calculate mean life expectancy by year:
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :results output :exports both
   summarize(group_by(gapminder, year), mean_life = mean(lifeExp))
   ## Or, to add it to the data:
@@ -687,6 +736,7 @@ What's the difference?
 #+END_SRC
 ** =group_by=, continued
 - Calculate change in life expectancy by country:
+#+LATEX: \pause
 #+BEGIN_SRC R :results output :exports both
     mutate(group_by(gapminder, country),
            life_change = lifeExp - lag(lifeExp))
@@ -699,7 +749,10 @@ What's the difference?
 #+END_SRC
 ** Chaining
 - What if we want to select all countries in Africa and calculate mean life expectancy by year?
-\pause
+#+LATEX: \pause
+- This is easy to do because the dplyr functions always take the data as their first argument and always return a data.frame
+** Chaining, continued
+#+LATEX: \pause
 - One option:
 #+BEGIN_SRC R :eval no
   summarize(group_by(filter(gapminder,
@@ -707,7 +760,7 @@ What's the difference?
                      year),
             mean_life = mean(lifeExp))
 #+END_SRC
-\pause
+#+LATEX: \pause
 - Or we could assign to objects along the way
 #+BEGIN_SRC R :eval no
   just_africa <- filter(gapminder,continent == "Africa"),
@@ -716,19 +769,19 @@ What's the difference?
 #+END_SRC
 ** Piping
 - Both of those have downsides, though
-\pause
+#+LATEX: \pause
 - We'll use the /pipe/ =%>%= to "pipe" the thing on the left into the thing on the right:
 - *Tip:* In Rstudio, use Ctrl+shift+m (Cmd+shift+m) to get =%>%=
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :eval no
   gapminder %>%
     filter(continent == "Africa") %>%
 #+END_SRC
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :eval no
     group_by(year) %>%
 #+END_SRC
-\pause
+#+LATEX: \pause
 #+BEGIN_SRC R :eval no
     summarize(meanlife = mean(lifeExp))
 #+END_SRC
@@ -741,6 +794,9 @@ What's the difference?
     summarize(avg_life = mean(lifeExp)) %>%
     mutate(change_life = avg_life - lag(avg_life))
 #+END_SRC
+** Ungrouping
+- Note that our answer had "continent" as a group
+- It's easy to forget about this, so if you're saving the object for use later, you may want to run =ungroup()= to undo the grouping on the data.frame.
 ** Other data manipulation
 - Those commands take care of the most common data manipulation tasks
 - There's tons more but we don't have the time to go over them all
@@ -751,7 +807,7 @@ What's the difference?
 - Piping can make it easier to read code
 * Reporting from R
 ** Reporting
-- We've reviewed most of what you need to do data analysis!
+- We've learned most of what you need to do data analysis!
 - Now let's do a new analysis on how to report, so we'll learn
   - How to report
   - Review much of what we learned
@@ -766,17 +822,18 @@ What's the difference?
 #+END_SRC
 ** Descriptive statistics
 - Let's look at the relationship between college education and the percent living in poverty. And maybe this looks different in metro areas, so let's keep that in mind too.
-\pause
+#+LATEX: \pause
 - I always like to show some descriptive statistics:
 #+BEGIN_SRC R
   midwest %>%
     select(percbelowpoverty, percollege, inmetro) %>%
     summarize_all(funs(mean, sd))
 #+END_SRC
-\pause
+#+LATEX: \pause
 - But what if we want to show that in our paper?
-\pause
-- There are several packages that let you easily make \LaTeX   tables, let's use =stargazer=:
+** stargazer
+#+LATEX: \pause
+- There are several packages that let you easily make \LaTeX\nbsp{}tables, let's use =stargazer=:
 #+BEGIN_SRC R
   library(stargazer)
 #+END_SRC
@@ -800,13 +857,13 @@ What's the difference?
               title="Descriptive Statistics")
 #+END_SRC
 ** Descriptive stats, latex table result
-- use =\input{tables/desc-stats.tex}= to import the table into your paper
+- use =\input{output/desc-stats.tex}= to import the table into your paper
 #+BEGIN_EXPORT latex
 \input{tables/desc-stats.tex}
 #+END_EXPORT
 ** Plot 1
 - Let's make a scatterplot!
-\pause
+#+LATEX: \pause
 - Make a scatterplot with =percbelowpoverty= on the y-axis and include info on =percollege= and =inmetro=
 
 ** Plot 1, simple
@@ -850,7 +907,7 @@ What's the difference?
          width = 9, height = 6.5)
 #+END_SRC
 
-** Plot 1, result
+** 
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/my-scatterplot.pdf]]
 ** Linear regression
@@ -869,19 +926,20 @@ What's the difference?
 #+END_SRC
 #+BEGIN_SRC R :exports none
   stargazer(my_reg,
+            font.size = "tiny", 
             out = "tables/my-reg.tex")
 #+END_SRC
-
-** Linear regression table, result
-- Use =\input{output/my-reg.tex}=
+#+LATEX: \pause
+- Use =\input{output/my-reg.tex}= in your \LaTeX\nbsp{} document to import the table!
+** 
 #+BEGIN_EXPORT latex
 \input{tables/my-reg.tex}
 #+END_EXPORT
-
-** Thanks for coming!
+** 
 :PROPERTIES:
-:BEAMER_OPTS: label=thanks,standout
+:BEAMER_OPT: label=thanks,standout
 :END:
+Thanks for coming!
 * Footnotes
 
 [fn:1] Technically, a =tibble=, but the difference isn't very much, so we'll ignore that
