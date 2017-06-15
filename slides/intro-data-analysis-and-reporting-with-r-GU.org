@@ -1204,8 +1204,8 @@ The broom package has three functions that turns models into data.frames:
 - What if we want to merge that info from augment back into the original data frame?
 - Dplyr also provides functions for merging (joining) data.frames!
 
-
-** 
+** Working with strings
+**
 :PROPERTIES:
 :BEAMER_OPT: label=thanks,standout
 :END:
