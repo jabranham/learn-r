@@ -1205,7 +1205,10 @@ The broom package has three functions that turns models into data.frames:
 - Dplyr also provides functions for merging (joining) data.frames!
 
 ** Working with strings
-**
+
+** How to get help
+
+** 
 :PROPERTIES:
 :BEAMER_OPT: label=thanks,standout
 :END:
