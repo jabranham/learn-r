@@ -805,6 +805,69 @@ What's the difference?
 - We learned how to use some of the most common =dplyr= functions to manipulate data (filter, select, mutate, summarize)
 - =group_by= makes doing this by groups super easy
 - Piping can make it easier to read code
+* Diamonds
+** The diamonds dataset
+- We just learned a lot, let's apply some of it to a new dataset
+- I'm also going to switch from this powerpoint to a "live demo!"
+#+BEGIN_SRC R :eval no
+  library(tidyverse)
+
+  head(diamonds)
+  summary(diamonds)
+  ## View(diamonds)
+
+  ## Look at counts of diamonds by cut quality
+
+  ggplot(diamonds, aes(cut)) +
+    geom_bar()
+
+  ## Oftentimes want to add color:
+
+  ggplot(diamonds, aes(cut, color = cut)) +
+    geom_bar()
+
+  ## But need to use fill:
+
+  ggplot(diamonds, aes(cut, fill = cut)) +
+    geom_bar()
+
+  ## Might want to fill based on another variable:
+
+  ggplot(diamonds, aes(cut, fill = clarity)) +
+    geom_bar()
+
+  ## Defaults to stacking, which you may not want
+
+  ## Can adjust "position" to what you want:
+
+  ggplot(diamonds, aes(cut, fill = clarity)) +
+    geom_bar(position = "dodge")
+
+  ggplot(diamonds, aes(cut, fill = clarity)) +
+    geom_bar(position = "fill")
+
+  ## Look at the price by cut
+  ggplot(diamonds, aes(cut, price)) +
+    geom_boxplot()
+
+
+  ## Flip coordinate
+  ggplot(diamonds, aes(cut, price)) +
+    geom_boxplot() +
+    coord_flip()
+
+
+  ## What if we calculate the mean price and want to put it in the graph
+  ## ourselves?
+
+  diamonds %>%
+    group_by(cut) %>%
+    summarize(mean = mean(price)) %>%
+    ggplot(aes(cut, mean,
+               color = cut)) +
+    geom_bar()
+#+END_SRC
+
 * Reporting from R
 ** Reporting
 - We've learned most of what you need to do data analysis!
