@@ -1201,6 +1201,21 @@ The broom package has three functions that turns models into data.frames:
 #+BEGIN_SRC R :eval no
   map(my_regs, broom::augment)
 #+END_SRC
+** Reporting multiple models
+- The stargazer function is smart enough to figure out multiple models:
+#+BEGIN_SRC R :eval no
+  stargazer(my_regs,
+            out = "../output/my-reg.tex")
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  stargazer(my_reg,
+            font.size = "tiny", 
+            out = "tables/my-reg.tex")
+#+END_SRC
+** 
+#+BEGIN_EXPORT latex
+\input{tables/my-reg.tex}
+#+END_EXPORT
 ** Plotting predicted values
 - We usually want to plot the predicted values from our models
 - We'll keep using a linear model, but this can really be anything
