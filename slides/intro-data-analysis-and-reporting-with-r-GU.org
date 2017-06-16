@@ -1230,10 +1230,57 @@ The broom package has three functions that turns models into data.frames:
 ** 
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/predictions.pdf]]
+** Merging 
+- Let's talk about merging data!
+- Oftentimes we have different datasets that we need to merge together for whatever reason
+- dplyr refers to "merging" as "joining," which is language borrowed from SQL
+- Let's look at two toy datasets that come with dplyr
+** 
+#+BEGIN_SRC R :exports both
+  band_members
+#+END_SRC
+#+BEGIN_SRC R 
+  band_instruments
+#+END_SRC
+** Joining
+- dplyr thinks about the two datasets as "x" (on the left) and "y" (on the right)
+- We can use joins to add columns based on shared values
+- Four basic uses:
+  - =full_join()= keeps everything from x and y
+  - =left_join= keeps everything from x
+  - =right_join= keeps everything from y
+  - =inner_join= returns only matching rows
+** Band membership joins
+#+BEGIN_SRC R
+  full_join(band_members, band_instruments)
+  left_join(band_members, band_instruments)
+  right_join(band_members, band_instruments)
+  inner_join(band_members, band_instruments)
+#+END_SRC
+** Different column names in merges
+- By default, dplyr will join the datasets based on all the shared column names
+- What if we have different column names?
+** 
+#+BEGIN_SRC R :exports both
+  band_members
+  band_instruments2
+#+END_SRC
+** Different column names
+- One solution: rename the columns in one data frame so they're the same:
+#+BEGIN_SRC R
+  rename(band_instruments2, name = artist)
+#+END_SRC
+** Different column names
+Another solution: tell dplyr this info during the join
+#+BEGIN_SRC R
+  full_join(band_members, band_instruments2,
+            by = c("name" = "artist"))
+#+END_SRC
+
 ** Working with strings
 
 ** How to get help
-
+- Stack overflow (but have an MRE)
 ** Other tools that work well
 - Git
 - \LaTeX
