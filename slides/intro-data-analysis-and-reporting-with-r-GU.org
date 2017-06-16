@@ -10,6 +10,7 @@
 #+LATEX_HEADER: \usepackage[newfloat]{minted}
 #+LATEX_CLASS_OPTIONS: [colorlinks, urlcolor=blue, aspectratio=169]
 #+PROPERTY: header-args:R :session *R*
+#+PROPERTY: header-args :tangle yes
 #+BEAMER_THEME: metropolis[titleformat=smallcaps, progressbar=frametitle]
 #+PROPERTY: header-args:R :results output
 #+BEGIN_SRC R :exports none
@@ -1200,14 +1201,43 @@ The broom package has three functions that turns models into data.frames:
 #+BEGIN_SRC R :eval no
   map(my_regs, broom::augment)
 #+END_SRC
-** Merging
-- What if we want to merge that info from augment back into the original data frame?
-- Dplyr also provides functions for merging (joining) data.frames!
-
+** Plotting predicted values
+- We usually want to plot the predicted values from our models
+- We'll keep using a linear model, but this can really be anything
+- Let's say we want to compare how adding the interaction term affects our predictions
+- One way: Plot predicted values from our first and third regressions!
+- Let's add them to our data.frame
+** Getting predicted values
+#+BEGIN_SRC R
+  my_midwest <- midwest
+  my_midwest$pred_m1 <- predict(my_regs$model1)
+  my_midwest$pred_m3 <- predict(my_regs$model3)
+#+END_SRC
+** Generate plots
+#+BEGIN_SRC R
+  ggplot(my_midwest,
+         aes(percollege)) +
+    geom_line(aes(y = pred_m1)) +
+    geom_line(aes(y = pred_m3,
+                  linetype = as.logical(inmetro)),
+              color = "blue")
+#+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/predictions.pdf",
+         ## Important to specify!!!
+         width = 9, height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/predictions.pdf]]
 ** Working with strings
 
 ** How to get help
 
+** Other tools that work well
+- Git
+- \LaTeX
+- (r)markdown
 ** 
 :PROPERTIES:
 :BEAMER_OPT: label=thanks,standout
