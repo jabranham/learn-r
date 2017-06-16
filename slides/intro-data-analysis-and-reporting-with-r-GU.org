@@ -1028,7 +1028,7 @@ Always test a function to make sure it works!
   g + scale_color_manual(values = c("red3", "blue"))
 #+END_SRC
 #+BEGIN_SRC R :exports none
-  g
+  g + scale_color_manual(values = c("red3", "blue"))
   ggsave("figures/my-plot1-color.pdf",
          width = 9, height = 6.5)
 #+END_SRC
@@ -1042,7 +1042,8 @@ Always test a function to make sure it works!
                          labels = c("Rural", "Urban"))
 #+END_SRC
 #+BEGIN_SRC R :exports none
-  g
+  g + scale_color_manual(values = c("red3", "blue"),
+                         labels = c("Rural", "Urban"))
   ggsave("figures/my-plot1-scales.pdf",
          width = 9, height = 6.5)
 #+END_SRC
@@ -1061,7 +1062,11 @@ Always test a function to make sure it works!
                          name = "")
 #+END_SRC
 #+BEGIN_SRC R :exports none
-  g
+  g <- g + scale_color_manual(values = c("red3", "blue"),
+                             labels = c("Rural", "Urban"),
+                             name = "") +
+    scale_shape_discrete(labels = c("Rural", "Urban"),
+                         name = "")
   ggsave("figures/my-plot1-scales2.pdf",
          width = 9, height = 6.5)
 #+END_SRC
@@ -1076,6 +1081,7 @@ Always test a function to make sure it works!
                y = "Percent with a college degree")
 #+END_SRC
 #+BEGIN_SRC R :exports none
+  g
   ggsave("figures/my-plot1-labs.pdf",
          width = 9, height = 6.5)
 #+END_SRC
@@ -1136,9 +1142,6 @@ Always test a function to make sure it works!
          width = 9, height = 6.5)
 #+END_SRC
 
-** 
-#+ATTR_LATEX: :float t :width 0.8\textwidth
-[[file:figures/my-scatterplot.pdf]]
 ** Linear regression
 - Let's run a linear predicting poverty with education and include an interaction term for inmetro
   - Yes, I'm ignoring all kinds of issues with this particular model
