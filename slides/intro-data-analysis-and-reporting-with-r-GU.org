@@ -7,12 +7,9 @@
 #+LATEX_COMPILER: xelatex
 #+OPTIONS: toc:nil H:2
 #+LATEX_HEADER: \beamerdefaultoverlayspecification{<+->}
-#+LATEX_HEADER: \usepackage[newfloat]{minted}
 #+LATEX_CLASS_OPTIONS: [colorlinks, urlcolor=blue, aspectratio=169]
-#+PROPERTY: header-args:R :session *R*
-#+PROPERTY: header-args :tangle yes
+#+PROPERTY: header-args:R :session *R* :results output
 #+BEAMER_THEME: metropolis[titleformat=smallcaps, progressbar=frametitle]
-#+PROPERTY: header-args:R :results output
 #+BEGIN_SRC R :exports none
   dir.create("figures/", showWarnings = FALSE)
   dir.create("tables/", showWarnings = FALSE)
@@ -864,8 +861,8 @@ What's the difference?
     group_by(cut) %>%
     summarize(mean = mean(price)) %>%
     ggplot(aes(cut, mean,
-               color = cut)) +
-    geom_bar()
+               fill = cut)) +
+    geom_bar(stat = "identity")
 #+END_SRC
 
 * Reporting from R
@@ -1001,7 +998,7 @@ Always test a function to make sure it works!
     ## inmetro is a number but needs to be discrete.
     ## as.logical will convert so that a 0 is FALSE
     mutate(inmetro = as.logical(inmetro)) %>%
-    ggplot(aes(percbelowpoverty, percollege,
+    ggplot(aes(percollege, percbelowpoverty,
                color = inmetro,
                shape = inmetro)) +
     geom_point()
@@ -1077,8 +1074,8 @@ Always test a function to make sure it works!
 - We should probably fix up our axis labels
 - Note that if you want to give the plot a title, subtitle, or caption, you may do so here
 #+BEGIN_SRC R
-  g <- g + labs(x = "Percent below poverty",
-               y = "Percent with a college degree")
+  g <- g + labs(y = "Percent below poverty",
+               x = "Percent with a college degree")
 #+END_SRC
 #+BEGIN_SRC R :exports none
   g
@@ -1108,17 +1105,16 @@ Always test a function to make sure it works!
 ** Plot 1, full
 #+BEGIN_SRC R
   midwest %>%
-    select(percbelowpoverty, percollege, inmetro) %>%
     mutate(inmetro = as.logical(inmetro)) %>%
-    ggplot(aes(percbelowpoverty, percollege,
+    ggplot(aes(percollege, percbelowpoverty,
                color = inmetro,
                shape = inmetro)) +
     geom_point() +
     scale_color_manual(values = c("red3", "blue"), labels = c("Rural", "Urban"),
                        name = "") +
     scale_shape_discrete(labels = c("Rural", "Urban"), name = "") +
-    labs(y = "Percent below poverty line",
-         x = "Percent with a college education") +
+    labs(x = "Percent below poverty line",
+         y = "Percent with a college education") +
     theme_bw()
 #+END_SRC
 #+BEGIN_SRC R :exports none
@@ -1316,7 +1312,7 @@ The broom package has three functions that turns models into data.frames:
             out = "../output/my-reg.tex")
 #+END_SRC
 #+BEGIN_SRC R :exports none
-  stargazer(my_reg,
+  stargazer(my_regs,
             font.size = "tiny", 
             out = "tables/my-reg.tex")
 #+END_SRC
@@ -1359,7 +1355,7 @@ The broom package has three functions that turns models into data.frames:
 - dplyr refers to "merging" as "joining," which is language borrowed from SQL
 - Let's go to another "live demo"
 - Let's look at two toy datasets that come with dplyr
-#+BEGIN_SRC R :eval no
+#+BEGIN_SRC R :eval no :exports none
   library(tidyverse)
 
   band_members
