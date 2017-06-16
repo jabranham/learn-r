@@ -881,7 +881,7 @@ What's the difference?
 - Let's change the dataset we're using, just for something new:
 - We'll use the =midwest= dataset from =ggplot2=, which has info on some U.S. midwest counties:
 #+BEGIN_SRC R
-  library(dplyr); library(ggplot2)
+  library(tidyverse)
   midwest
 #+END_SRC
 ** Descriptive statistics
@@ -916,7 +916,7 @@ $$ \frac{1}{n} \sum x  $$
   my_mean <- function(x){
     sum(x) / length(x)
   }
-  my_mean(c(-1:10))
+  my_mean(-1:10)
 #+END_SRC
 #+LATEX: \pause
 But what about NA???
@@ -998,7 +998,6 @@ Always test a function to make sure it works!
 ** Plot 1, simple
 #+BEGIN_SRC R
   g <- midwest %>%
-    select(percbelowpoverty, percollege, inmetro) %>%
     ## inmetro is a number but needs to be discrete.
     ## as.logical will convert so that a 0 is FALSE
     mutate(inmetro = as.logical(inmetro)) %>%
@@ -1007,7 +1006,14 @@ Always test a function to make sure it works!
                shape = inmetro)) +
     geom_point()
 #+END_SRC
-
+#+BEGIN_SRC R :exports none
+  g
+  ggsave("figures/my-plot1-simple.pdf",
+         width = 9, height = 6.5)
+#+END_SRC
+**
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/my-plot1-simple.pdf]]
 ** More about graphs
 - Note that I assigned the plot to an object =g=
 - We might want to change some more stuff about the graph (legends, assign colors, etc)
@@ -1021,14 +1027,28 @@ Always test a function to make sure it works!
   ## Plain red is super harsh, let's scale it back a bit:
   g + scale_color_manual(values = c("red3", "blue"))
 #+END_SRC
-
+#+BEGIN_SRC R :exports none
+  g
+  ggsave("figures/my-plot1-color.pdf",
+         width = 9, height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/my-plot1-color.pdf]]
 ** Changing legend labels
 - Of course, =FALSE= and =TRUE= are not good legend labels. We can change those too with the =scale_color_manual= command:
 #+BEGIN_SRC R
   g + scale_color_manual(values = c("red3", "blue"),
                          labels = c("Rural", "Urban"))
 #+END_SRC
-
+#+BEGIN_SRC R :exports none
+  g
+  ggsave("figures/my-plot1-scales.pdf",
+         width = 9, height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/my-plot1-scales.pdf]]
 ** UGHHHHHHHHH
 - Now the legends are separate, though. Need to tell the shape aesthetic to use the same labels!
 - While we're at it, let's remove the legend title (name):
@@ -1040,6 +1060,14 @@ Always test a function to make sure it works!
     scale_shape_discrete(labels = c("Rural", "Urban"),
                          name = "")
 #+END_SRC
+#+BEGIN_SRC R :exports none
+  g
+  ggsave("figures/my-plot1-scales2.pdf",
+         width = 9, height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/my-plot1-scales2.pdf]]
 ** Axis labels
 - We should probably fix up our axis labels
 - Note that if you want to give the plot a title, subtitle, or caption, you may do so here
@@ -1047,6 +1075,13 @@ Always test a function to make sure it works!
   g <- g + labs(x = "Percent below poverty",
                y = "Percent with a college degree")
 #+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/my-plot1-labs.pdf",
+         width = 9, height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/my-plot1-labs.pdf]]
 ** Background and themes
 - I'm not a fan of the default grey background.
 - You can adjust everything yourself, but there are several themes that come built-in
@@ -1080,6 +1115,13 @@ Always test a function to make sure it works!
          x = "Percent with a college education") +
     theme_bw()
 #+END_SRC
+#+BEGIN_SRC R :exports none
+  ggsave("figures/my-plot1-themed.pdf",
+         width = 9, height = 6.5)
+#+END_SRC
+** 
+#+ATTR_LATEX: :float t :width 0.8\textwidth
+[[file:figures/my-plot1-themed.pdf]]
 ** How to save ggplots
 - The =ggsave= function saves a plot (by default, the last one you plotted)
 - It's important to specify the width and height
@@ -1312,54 +1354,53 @@ The broom package has three functions that turns models into data.frames:
 - Let's talk about merging data!
 - Oftentimes we have different datasets that we need to merge together for whatever reason
 - dplyr refers to "merging" as "joining," which is language borrowed from SQL
+- Let's go to another "live demo"
 - Let's look at two toy datasets that come with dplyr
-** 
-#+BEGIN_SRC R :exports both
+#+BEGIN_SRC R :eval no
+  library(tidyverse)
+
   band_members
-#+END_SRC
-#+BEGIN_SRC R 
+
   band_instruments
-#+END_SRC
-** Joining
-- dplyr thinks about the two datasets as "x" (on the left) and "y" (on the right)
-- We can use joins to add columns based on shared values
-- Four basic uses:
-  - =full_join()= keeps everything from x and y
-  - =left_join= keeps everything from x
-  - =right_join= keeps everything from y
-  - =inner_join= returns only matching rows
-** Band membership joins
-#+BEGIN_SRC R
+
+  ##  Joining
+  ## - dplyr thinks about the two datasets as "x" (on the left) and "y" (on the right)
+  ## - We can use joins to add columns based on shared values
+  ## - Four basic uses:
+  ##   - =full_join()= keeps everything from x and y
+  ##   - =left_join= keeps everything from x
+  ##   - =right_join= keeps everything from y
+  ##   - =inner_join= returns only matching rows
+
+
   full_join(band_members, band_instruments)
   left_join(band_members, band_instruments)
   right_join(band_members, band_instruments)
   inner_join(band_members, band_instruments)
-#+END_SRC
-** Different column names in merges
-- By default, dplyr will join the datasets based on all the shared column names
-- What if we have different column names?
-** 
-#+BEGIN_SRC R :exports both
+
+  ## - By default, dplyr will join the datasets based on all the shared column names
+  ## - What if we have different column names?
+
   band_members
   band_instruments2
-#+END_SRC
-** Different column names
-- One solution: rename the columns in one data frame so they're the same:
-#+BEGIN_SRC R
+
+
+  ## - One solution: rename the columns in one data frame so they're the same:
+
   rename(band_instruments2, name = artist)
-#+END_SRC
-** Different column names
-Another solution: tell dplyr this info during the join
-#+BEGIN_SRC R
+
+
+  ## Another solution: tell dplyr this info during the join
+
   full_join(band_members, band_instruments2,
             by = c("name" = "artist"))
 #+END_SRC
 
-** Working with strings
-
 ** How to get help
 - Stack overflow (but have an MRE)
-** Other tools that work well
+- Twitter (#rstats)
+- Me! (branham@utexas.edu)
+** Other tools that work well with R
 - Git
 - \LaTeX
 - (r)markdown
