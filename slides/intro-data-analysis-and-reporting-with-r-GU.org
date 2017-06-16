@@ -809,7 +809,7 @@ What's the difference?
 ** The diamonds dataset
 - We just learned a lot, let's apply some of it to a new dataset
 - I'm also going to switch from this powerpoint to a "live demo!"
-#+BEGIN_SRC R :eval no
+#+BEGIN_SRC R :eval no :exports none
   library(tidyverse)
 
   head(diamonds)
@@ -889,7 +889,7 @@ What's the difference?
 #+LATEX: \pause
 - I always like to show some descriptive statistics
 - Find the mean and standard deviation of our three variables!
-#+ \pause
+#+LATEX: \pause
 #+BEGIN_SRC R
   midwest %>%
     select(percbelowpoverty, percollege, inmetro) %>%
@@ -908,7 +908,7 @@ What's the difference?
 #+LATEX: \pause
 $$ \frac{1}{n} \sum x  $$
 #+LATEX: \pause
-#+BEGIN_SRC R
+#+BEGIN_SRC R :eval no
   sum(x) / length(x)
 #+END_SRC
 ** Custom functions
@@ -922,7 +922,7 @@ $$ \frac{1}{n} \sum x  $$
 But what about NA???
 ** If statements
 - An =if= statement allows us to conditionally execute code
-#+BEGIN_SRC R
+#+BEGIN_SRC R :eval no
   my_name <- "Alex"
   if (my_name == "Alex"){
     print("I'm Alex!!!")
@@ -953,7 +953,7 @@ Always test a function to make sure it works!
   my_mean(c(NA, 0, 1), FALSE)
 #+END_SRC
 ** Back to our regularly scheduled program...
-#+BEGIN_SRC R
+#+BEGIN_SRC R :eval no
   midwest %>%
     select(percbelowpoverty, percollege, inmetro) %>%
     summarize_all(funs(mean, sd))
@@ -1011,7 +1011,7 @@ Always test a function to make sure it works!
   ggsave("figures/my-plot1-simple.pdf",
          width = 9, height = 6.5)
 #+END_SRC
-**
+** 
 #+ATTR_LATEX: :float t :width 0.8\textwidth
 [[file:figures/my-plot1-simple.pdf]]
 ** More about graphs
