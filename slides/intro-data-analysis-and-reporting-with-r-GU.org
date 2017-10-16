@@ -79,7 +79,7 @@ This is an html page so that it is easier to search and copy/paste. It won't inc
 #+END_SRC
 
 #+BEGIN_SRC R :exports both :results output
-(7 * 149) ^ (1 / 2)
+  (7 * 149) ^ (1 / 2)
 #+END_SRC
 ** Packages
 - At this point, please install a few packages. You'll need an internet connection.
@@ -164,9 +164,9 @@ What's the relationship between wealth (gdp) and average life expectancy?
 - *Tip:* =?geom_point=
 #+LATEX: \pause
 #+BEGIN_SRC R
-    ggplot(data = gapminder) +
-      geom_point(mapping = aes(x = gdpPercap, # Put gdp on x axis
-                               y = lifeExp))  # Put lifeExp on y
+  ggplot(data = gapminder) +
+    geom_point(mapping = aes(x = gdpPercap, # Put gdp on x axis
+                             y = lifeExp))  # Put lifeExp on y
 
 #+END_SRC
 #+BEGIN_SRC R :exports none
